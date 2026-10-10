@@ -19,5 +19,5 @@ window.LIVRE_CONFIG = {
     messagingSenderId: '583323951222',
     appId: '1:583323951222:web:357387fef538d77bc6bf57',
   },
-  vapidPublicKey: '',        // a mesma VAPID_PUBLIC_KEY do Netlify
+    vapidPublicKey: 'BO1fQuLqA83lcEsztQ3HYjJt439a08xtGemYnGaDdHdtYzMjLIB2bJM-aqAzCQ-boBB6mw_NB_or4AVSvI2Xw-0',
 };
