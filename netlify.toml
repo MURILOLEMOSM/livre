@@ -1,0 +1,23 @@
+# Site estático + função agendada do lembrete diário
+[build]
+  publish = "."
+  command = ""
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  # o firebase-admin não se dá bem empacotado; vai junto como pacote normal
+  external_node_modules = ["firebase-admin", "web-push"]
+
+# O service worker nunca pode ficar preso em cache do navegador
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+# Verificação do app Android (Play Store): precisa ser JSON
+[[headers]]
+  for = "/.well-known/assetlinks.json"
+  [headers.values]
+    Content-Type = "application/json"
+    Access-Control-Allow-Origin = "*"

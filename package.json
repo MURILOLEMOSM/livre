@@ -1,0 +1,14 @@
+{
+  "name": "livre",
+  "private": true,
+  "type": "module",
+  "description": "LIVRE: controle de hábitos com login, sincronização e lembrete diário (Firebase + Netlify)",
+  "scripts": {
+    "dev": "netlify dev",
+    "vapid": "web-push generate-vapid-keys"
+  },
+  "dependencies": {
+    "firebase-admin": "^14.5.0",
+    "web-push": "^3.6.7"
+  }
+}

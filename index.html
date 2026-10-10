@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>LIVRE</title>
+  <meta name="description" content="Conte seus dias livres, bata recordes e receba um lembrete por dia. Crie sua conta e comece." />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest" id="manifestLink" />
+  <meta name="theme-color" content="#0D0D0D" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="LIVRE" />
+
+  <!-- Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+
+  <!-- Ícones -->
+  <script src="https://unpkg.com/lucide@1.52.0/dist/umd/lucide.min.js"></script>
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <!-- Login e primeiro acesso aparecem aqui, no lugar do app -->
+  <div id="gate" class="gate">
+    <div class="boot"><span class="brand">LIVRE<span>.</span></span></div>
+  </div>
+
+  <div class="app" id="app" hidden>
+
+    <!-- ========== MENU LATERAL (desktop) ========== -->
+    <aside class="rail" aria-label="Menu principal">
+      <a class="brand" href="#/hoje" aria-label="LIVRE, início">LIVRE<span>.</span></a>
+      <nav class="rail-nav">
+        <a href="#/hoje" data-nav="hoje"><i data-lucide="sun"></i>Hoje</a>
+        <a href="#/disputa" data-nav="disputa"><i data-lucide="swords"></i>Disputa</a>
+        <a href="#/foco" data-nav="foco"><i data-lucide="timer"></i>Foco</a>
+        <a href="#/pactos" data-nav="pactos"><i data-lucide="handshake"></i>Pactos</a>
+        <a href="#/conquistas" data-nav="conquistas"><i data-lucide="trophy"></i>Conquistas</a>
+      </nav>
+      <button type="button" class="sos-wide" data-action="sos">
+        <i data-lucide="life-buoy"></i>Tô com vontade
+      </button>
+      <button type="button" class="install" data-install><i data-lucide="download"></i>Instalar app</button>
+    </aside>
+
+    <!-- ========== TOPO (celular) ========== -->
+    <header class="topbar">
+      <a class="brand" href="#/hoje" aria-label="LIVRE, início">LIVRE<span>.</span></a>
+      <div class="topbar-end">
+        <button type="button" class="install" data-install><i data-lucide="download"></i>Instalar</button>
+        <a href="#/conquistas" class="lvl-chip" id="lvlChip" aria-label="Seu nível"></a>
+      </div>
+    </header>
+
+    <!-- ========== CONTEÚDO (cada tela é desenhada aqui) ========== -->
+    <main id="view" class="view" tabindex="-1"></main>
+
+    <!-- ========== BARRA INFERIOR (celular) ========== -->
+    <nav class="tabbar" aria-label="Navegação">
+      <a href="#/hoje" data-nav="hoje"><i data-lucide="sun"></i><span>Hoje</span></a>
+      <a href="#/foco" data-nav="foco"><i data-lucide="timer"></i><span>Foco</span></a>
+      <button type="button" class="tab-sos" data-action="sos" aria-label="Tô com vontade">
+        <i data-lucide="life-buoy"></i>
+      </button>
+      <a href="#/disputa" data-nav="disputa"><i data-lucide="swords"></i><span>Disputa</span></a>
+      <a href="#/conquistas" data-nav="conquistas"><i data-lucide="trophy"></i><span>Conquistas</span></a>
+    </nav>
+  </div>
+
+  <!-- ========== FOLHA: CRIAR / EDITAR HÁBITO ========== -->
+  <dialog id="dlgHabit" class="sheet" aria-labelledby="habitTitle">
+    <form id="habitForm" class="sheet-body" novalidate>
+      <div class="sheet-head">
+        <h3 id="habitTitle">Novo hábito</h3>
+        <button type="button" class="icon-btn" data-close aria-label="Fechar"><i data-lucide="x"></i></button>
+      </div>
+      <input type="hidden" id="fId" />
+
+      <label class="field">
+        <span>Nome</span>
+        <input id="fName" class="input" maxlength="40" placeholder="Ex.: Cigarro depois do almoço" />
+      </label>
+
+      <div class="field">
+        <span>Categoria</span>
+        <div id="fCatChips" class="chip-row wrap" role="radiogroup" aria-label="Categoria"></div>
+      </div>
+
+      <div class="grid-2">
+        <label class="field">
+          <span>Parei em</span>
+          <input id="fStart" type="datetime-local" class="input" />
+        </label>
+        <label class="field">
+          <span>Meta</span>
+          <select id="fGoal" class="input"></select>
+        </label>
+      </div>
+
+      <label class="field" id="customGoalWrap" hidden>
+        <span>Meta em dias</span>
+        <input id="fGoalCustom" type="number" min="1" max="3650" class="input" placeholder="Ex.: 45" />
+      </label>
+
+      <div class="grid-2">
+        <label class="field">
+          <span>Quanto gastava <em>(R$)</em></span>
+          <input id="fCost" type="number" min="0" step="0.5" inputmode="decimal" class="input" placeholder="Ex.: 12" />
+        </label>
+        <label class="field">
+          <span>Por</span>
+          <select id="fCostPer" class="input">
+            <option value="dia">dia</option>
+            <option value="semana">semana</option>
+            <option value="mes">mês</option>
+          </select>
+        </label>
+      </div>
+      <label class="field">
+        <span>Horas por dia que ele comia <em>(opcional)</em></span>
+        <input id="fHours" type="number" min="0" max="24" step="0.5" inputmode="decimal" class="input" placeholder="Ex.: 2" />
+      </label>
+
+      <label class="field">
+        <span>Por que você está parando? <em>(aparece quando bater a vontade)</em></span>
+        <textarea id="fWhy" rows="2" maxlength="160" class="input" placeholder="Ex.: Quero correr minha primeira prova sem perder o fôlego."></textarea>
+      </label>
+
+      <p id="habitError" class="form-error" role="alert" hidden></p>
+      <div class="sheet-actions">
+        <button type="button" class="btn ghost" data-close>Cancelar</button>
+        <button type="submit" class="btn gold">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ========== FOLHA: RECAÍDA ========== -->
+  <dialog id="dlgRelapse" class="sheet" aria-labelledby="relapseTitle">
+    <form id="relapseForm" class="sheet-body" novalidate>
+      <div class="sheet-head">
+        <h3 id="relapseTitle">Registrar recaída</h3>
+        <button type="button" class="icon-btn" data-close aria-label="Fechar"><i data-lucide="x"></i></button>
+      </div>
+      <p class="muted">Acontece. Os <b id="relapseCurrent"></b> sem <b id="relapseName"></b> vão para o histórico e a árvore volta a ser semente. Anotar o gatilho ajuda a ver o padrão.</p>
+      <input type="hidden" id="rId" />
+
+      <div class="field">
+        <span>O que puxou? <em>(pode marcar mais de um)</em></span>
+        <div id="rTriggers" class="chip-row wrap"></div>
+      </div>
+
+      <label class="field">
+        <span>Quando foi</span>
+        <input id="rAt" type="datetime-local" class="input" />
+      </label>
+      <label class="field">
+        <span>Anotação (opcional)</span>
+        <textarea id="rNote" rows="2" maxlength="280" class="input" placeholder="Onde você estava, com quem, o que sentiu..."></textarea>
+      </label>
+
+      <p id="relapseError" class="form-error" role="alert" hidden></p>
+      <div class="sheet-actions">
+        <button type="button" class="btn ghost" data-close>Cancelar</button>
+        <button type="submit" class="btn gold">Confirmar recaída</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ========== FOLHA: SOS (vontade forte) ========== -->
+  <dialog id="dlgSos" class="sheet sos" aria-labelledby="sosTitle">
+    <div class="sheet-body" id="sosBody"></div>
+  </dialog>
+
+  <!-- ========== FOLHA: NOVO PACTO ========== -->
+  <dialog id="dlgPact" class="sheet" aria-labelledby="pactTitle">
+    <form id="pactForm" class="sheet-body" novalidate>
+      <div class="sheet-head">
+        <h3 id="pactTitle">Novo pacto</h3>
+        <button type="button" class="icon-btn" data-close aria-label="Fechar"><i data-lucide="x"></i></button>
+      </div>
+      <p class="muted">Você escolhe um juiz e um valor. Se recair antes do prazo, o juiz cobra e o valor vai para o destino combinado. O app não mexe em dinheiro: o acordo é entre vocês.</p>
+
+      <label class="field">
+        <span>Hábito</span>
+        <select id="pHabit" class="input"></select>
+      </label>
+      <div class="grid-2">
+        <label class="field">
+          <span>Prazo (dias)</span>
+          <input id="pDays" type="number" min="1" max="365" value="7" class="input" />
+        </label>
+        <label class="field">
+          <span>Valor em jogo (R$)</span>
+          <input id="pStake" type="number" min="1" step="1" value="50" class="input" />
+        </label>
+      </div>
+      <label class="field">
+        <span>Juiz (quem vai cobrar)</span>
+        <input id="pJudge" maxlength="40" class="input" placeholder="Ex.: Lucas, meu irmão" />
+      </label>
+      <label class="field">
+        <span>Se eu falhar, o valor vai para</span>
+        <input id="pDest" maxlength="60" class="input" placeholder="Ex.: Doação para o abrigo de animais" />
+      </label>
+
+      <p id="pactError" class="form-error" role="alert" hidden></p>
+      <div class="sheet-actions">
+        <button type="button" class="btn ghost" data-close>Cancelar</button>
+        <button type="submit" class="btn gold">Firmar pacto</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ========== FOLHA: LEMBRETE DIÁRIO ========== -->
+  <dialog id="dlgNotify" class="sheet" aria-labelledby="notifyTitle">
+    <div class="sheet-body" id="notifyBody"></div>
+  </dialog>
+
+  <!-- ========== FOLHA: PERGUNTA COM UM CAMPO (criar grupo, código de convite) ========== -->
+  <dialog id="dlgInput" class="sheet small" aria-labelledby="inputTitle">
+    <form id="inputForm" class="sheet-body" novalidate>
+      <div class="sheet-head">
+        <h3 id="inputTitle"></h3>
+        <button type="button" class="icon-btn" data-close aria-label="Fechar"><i data-lucide="x"></i></button>
+      </div>
+      <p id="inputText" class="muted"></p>
+      <label class="field"><span id="inputLabel"></span>
+        <input id="inputValue" class="input" maxlength="40" autocomplete="off" />
+      </label>
+      <p id="inputError" class="form-error" role="alert" hidden></p>
+      <div class="sheet-actions">
+        <button type="button" class="btn ghost" data-close>Cancelar</button>
+        <button type="submit" class="btn gold" id="inputOk">Confirmar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ========== FOLHA: ADICIONAR AMIGO POR NOME E ID ========== -->
+  <dialog id="dlgFriend" class="sheet small" aria-labelledby="friendTitle">
+    <form id="friendForm" class="sheet-body" novalidate>
+      <div class="sheet-head">
+        <h3 id="friendTitle">Adicionar amigo</h3>
+        <button type="button" class="icon-btn" data-close aria-label="Fechar"><i data-lucide="x"></i></button>
+      </div>
+      <p class="muted">Peça o ID para a pessoa. Ele fica na aba Disputa dela, no formato LIV-XXXXX.</p>
+      <label class="field"><span>Nome <em>(para conferir)</em></span>
+        <input id="friendName" class="input" maxlength="30" placeholder="Ex.: Lucas" autocomplete="off" />
+      </label>
+      <label class="field"><span>ID</span>
+        <input id="friendCode" class="input num" maxlength="9" placeholder="LIV-7K3P9" autocomplete="off" autocapitalize="characters" spellcheck="false" />
+      </label>
+      <div id="friendFound" hidden></div>
+      <p id="friendError" class="form-error" role="alert" hidden></p>
+      <div class="sheet-actions">
+        <button type="button" class="btn ghost" data-close>Cancelar</button>
+        <button type="submit" class="btn gold" id="friendOk">Procurar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ========== FOLHA: AJUDA PROFISSIONAL ========== -->
+  <dialog id="dlgHelp" class="sheet" aria-labelledby="helpTitle">
+    <div class="sheet-body" id="helpBody"></div>
+  </dialog>
+
+  <!-- ========== FOLHA: NOVO DESAFIO ========== -->
+  <dialog id="dlgChallenge" class="sheet small" aria-labelledby="chTitle">
+    <form id="challengeForm" class="sheet-body" novalidate>
+      <div class="sheet-head">
+        <h3 id="chTitle">Novo desafio</h3>
+        <button type="button" class="icon-btn" data-close aria-label="Fechar"><i data-lucide="x"></i></button>
+      </div>
+      <p class="muted">Vale para quem do grupo mostra esse hábito. Quem chegar ao fim sem recair ganha a medalha.</p>
+      <input type="hidden" id="chGroup" />
+      <div class="grid-2">
+        <label class="field"><span>Hábito</span><select id="chCat" class="input"></select></label>
+        <label class="field"><span>Prazo</span>
+          <select id="chDays" class="input">
+            <option value="7">7 dias</option><option value="14">14 dias</option><option value="21">21 dias</option>
+            <option value="30" selected>30 dias</option><option value="60">60 dias</option><option value="90">90 dias</option>
+          </select>
+        </label>
+      </div>
+      <label class="field"><span>Nome do desafio</span><input id="chName" class="input" maxlength="50" /></label>
+      <p id="chError" class="form-error" role="alert" hidden></p>
+      <div class="sheet-actions">
+        <button type="button" class="btn ghost" data-close>Cancelar</button>
+        <button type="submit" class="btn gold">Começar desafio</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ========== CONFIRMAÇÃO ========== -->
+  <dialog id="dlgConfirm" class="sheet small" aria-labelledby="confirmTitle">
+    <div class="sheet-body">
+      <h3 id="confirmTitle"></h3>
+      <p id="confirmText" class="muted"></p>
+      <div class="sheet-actions">
+        <button type="button" class="btn ghost" data-answer="no">Cancelar</button>
+        <button type="button" class="btn gold" data-answer="yes" id="confirmYes">Confirmar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ========== INSTALAR NO iPHONE ========== -->
+  <dialog id="dlgIos" class="sheet small" aria-labelledby="iosTitle">
+    <div class="sheet-body">
+      <div class="sheet-head">
+        <h3 id="iosTitle">Instalar no iPhone</h3>
+        <button type="button" class="icon-btn" data-close aria-label="Fechar"><i data-lucide="x"></i></button>
+      </div>
+      <ol class="steps">
+        <li>Abra esta página no Safari.</li>
+        <li>Toque em Compartilhar (o quadrado com a seta para cima).</li>
+        <li>Escolha "Adicionar à Tela de Início" e confirme.</li>
+      </ol>
+      <button type="button" class="btn gold block" data-close>Entendi</button>
+    </div>
+  </dialog>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Tela do PIN (fica por cima de tudo) -->
+  <div id="lock" class="lock" hidden></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/cloud.js"></script>
+  <script src="js/social.js"></script>
+  <script src="js/rules.js"></script>
+  <script src="js/art.js"></script>
+  <script src="js/views.js"></script>
+  <script src="js/views2.js"></script>
+  <script src="js/lock.js"></script>
+  <script src="js/dock.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/pwa.js"></script>
+</body>
+</html>
