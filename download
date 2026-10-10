@@ -1,0 +1,7 @@
+node_modules/
+.netlify/
+.env
+
+# Chave da conta de serviço do Firebase: NUNCA subir
+*firebase-adminsdk*.json
+service-account*.json

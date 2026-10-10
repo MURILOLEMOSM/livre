@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "TROQUE.PELO.PACOTE.QUE.O.PWABUILDER.GERAR",
+      "sha256_cert_fingerprints": ["TROQUE:PELA:IMPRESSAO:DIGITAL:QUE:O:PWABUILDER:GERAR"]
+    }
+  }
+]
