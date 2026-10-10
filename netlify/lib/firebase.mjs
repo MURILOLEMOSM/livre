@@ -26,14 +26,33 @@ export function missingEnv(names = []) {
   return ['FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_PRIVATE_KEY', ...names].filter(k => !process.env[k]);
 }
 
+/**
+ * Tira a chave de dentro do que foi colado no Netlify, mesmo que tenha vindo
+ * com aspas, com o "private_key": na frente ou com "\n" escrito como texto.
+ */
+function cleanKey(raw) {
+  const text = String(raw || '').replace(/\\n/g, '\n');
+  const m = text.match(/-----BEGIN PRIVATE KEY-----[\s\S]*?-----END PRIVATE KEY-----/);
+  return m ? m[0].replace(/\r/g, '') + '\n' : '';
+}
+
 function app() {
   if (getApps().length) return getApps()[0];
   const env = process.env;
-  // A chave costuma vir com "\n" escrito em vez de quebra de linha; aqui conserta
-  const privateKey = String(env.FIREBASE_PRIVATE_KEY || '').replace(/^"|"$/g, '').replace(/\\n/g, '\n');
-  return initializeApp({
-    credential: cert({ projectId: env.FIREBASE_PROJECT_ID, clientEmail: env.FIREBASE_CLIENT_EMAIL, privateKey }),
-  });
+  const privateKey = cleanKey(env.FIREBASE_PRIVATE_KEY);
+  if (!privateKey) throw new HttpError(500, 'Chave do servidor inválida: confira FIREBASE_PRIVATE_KEY no Netlify.');
+  try {
+    return initializeApp({
+      credential: cert({
+        projectId: String(env.FIREBASE_PROJECT_ID || '').trim(),
+        clientEmail: String(env.FIREBASE_CLIENT_EMAIL || '').trim(),
+        privateKey,
+      }),
+    });
+  } catch (e) {
+    console.error('[LIVRE] Firebase não iniciou:', e.message);
+    throw new HttpError(500, 'Chave do servidor inválida: confira as variáveis FIREBASE_ no Netlify.');
+  }
 }
 
 export const db = () => getFirestore(app());
@@ -43,9 +62,11 @@ export const auth = () => getAuth(app());
 export async function userFrom(req) {
   const token = (req.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
   if (!token) throw new HttpError(401, 'Entre na sua conta de novo.');
+  const a = auth();   // se a configuração estiver errada, o erro aparece com a causa certa
   try {
-    return (await auth().verifyIdToken(token)).uid;
-  } catch {
+    return (await a.verifyIdToken(token)).uid;
+  } catch (e) {
+    console.error('[LIVRE] Token recusado:', e.code || '', e.message);
     throw new HttpError(401, 'Sua sessão expirou. Entre de novo.');
   }
 }
