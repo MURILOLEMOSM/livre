@@ -600,6 +600,8 @@ function authHTML(mode = 'signin', { email = '' } = {}) {
           ${mode === 'forgot' || mode === 'check' ? '<button type="button" data-auth-mode="signin"><i data-lucide="arrow-left"></i>Voltar para entrar</button>' : ''}
         </div>
 
+        <button type="button" class="install auth-install" data-install><i data-lucide="download"></i>Instalar o LIVRE no celular</button>
+
         ${cloud.mode === 'local' ? `
           <div class="local-note">
             <p><b>Modo local.</b> As contas ficam só neste aparelho até você configurar o Firebase.</p>

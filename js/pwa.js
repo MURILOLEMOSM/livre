@@ -30,8 +30,19 @@
 
   if (isStandalone) return; // já instalado: nada de botão
 
-  /* ---------- Android / Chrome / Edge ---------- */
+  /* ---------- Botão "Instalar" ----------
+     Aparece sempre no celular (e no PC quando o navegador oferece).
+     Se o navegador tiver o pedido automático de instalação, usa ele;
+     se não tiver, abre o passo a passo certo para o aparelho. */
+  const ua = navigator.userAgent;
+  const isAndroid = /android/i.test(ua);
+  const inApp = /instagram|fban|fbav|fb_iab|line\/|tiktok|musical_ly|snapchat|twitter|linkedinapp|; wv\)/i.test(ua);
+  const isSamsung = /samsungbrowser/i.test(ua);
+  const isFirefox = /firefox|fxios/i.test(ua);
+  const iosSafari = isIOS && !/crios|fxios|edgios|opios/i.test(ua);
   let deferredPrompt = null;
+
+  if (isIOS || isAndroid) root.classList.add('can-install');
 
   window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
@@ -45,18 +56,61 @@
     toast('LIVRE instalado. Ele já está na sua tela inicial.', true);
   });
 
-  /* ---------- iPhone / iPad ---------- */
-  if (isIOS) root.classList.add('can-install');
+  /** Passo a passo para quando o navegador não abre a instalação sozinho */
+  function steps() {
+    if (inApp) return {
+      title: 'Abra no navegador',
+      items: [
+        'Este link abriu dentro de outro app, e por aqui não dá para instalar.',
+        `Toque nos três pontinhos (ou no ícone de compartilhar) e escolha "Abrir no ${isIOS ? 'Safari' : 'Chrome'}".`,
+        'Lá, toque em "Instalar" de novo.',
+      ],
+    };
+    if (isIOS) return {
+      title: 'Instalar no iPhone',
+      items: iosSafari ? [
+        'Toque em Compartilhar (o quadrado com a seta para cima), na barra do Safari.',
+        'Role e escolha "Adicionar à Tela de Início".',
+        'Toque em "Adicionar". O LIVRE aparece com ícone próprio.',
+      ] : [
+        'Toque em Compartilhar (o quadrado com a seta para cima), perto da barra de endereço.',
+        'Escolha "Adicionar à Tela de Início". Se não aparecer, abra esta página no Safari e faça por lá.',
+        'Toque em "Adicionar". O LIVRE aparece com ícone próprio.',
+      ],
+    };
+    if (isSamsung) return {
+      title: 'Instalar no Android',
+      items: ['Toque no menu (as três linhas) embaixo.', 'Escolha "Adicionar página a" e depois "Tela inicial".', 'Confirme. O LIVRE aparece com ícone próprio.'],
+    };
+    if (isFirefox) return {
+      title: 'Instalar no Android',
+      items: ['Toque nos três pontinhos.', 'Escolha "Instalar" ou "Adicionar à tela inicial".', 'Confirme. O LIVRE aparece com ícone próprio.'],
+    };
+    if (isAndroid) return {
+      title: 'Instalar no Android',
+      items: ['Toque nos três pontinhos, no canto de cima do Chrome.', 'Escolha "Instalar app" (ou "Adicionar à tela inicial" e depois "Instalar").', 'Confirme. O LIVRE aparece com ícone próprio na tela inicial.'],
+    };
+    return {
+      title: 'Instalar no computador',
+      items: ['No Chrome ou no Edge, clique no ícone de instalar no fim da barra de endereço.', 'Ou abra o menu do navegador e escolha "Instalar LIVRE".'],
+    };
+  }
 
   document.addEventListener('click', async e => {
     if (!e.target.closest('[data-install]')) return;
+    e.preventDefault();
     if (deferredPrompt) {
       deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
+      const { outcome } = await deferredPrompt.userChoice;
       deferredPrompt = null;
-      root.classList.remove('can-install');
-    } else if (isIOS) {
-      document.getElementById('dlgIos').showModal();
+      if (outcome === 'accepted') root.classList.remove('can-install');
+      return;
     }
+    const dlg = document.getElementById('dlgIos');
+    if (!dlg) return;
+    const s = steps();
+    dlg.querySelector('#iosTitle').textContent = s.title;
+    dlg.querySelector('.steps').innerHTML = s.items.map(t => `<li>${t}</li>`).join('');
+    dlg.showModal();
   });
 })();
