@@ -88,7 +88,7 @@
     };
     if (isAndroid) return {
       title: 'Instalar no Android',
-      items: ['Toque nos três pontinhos, no canto de cima do Chrome.', 'Escolha "Instalar app" (ou "Adicionar à tela inicial" e depois "Instalar").', 'Confirme. O LIVRE aparece com ícone próprio na tela inicial.'],
+      items: ['Se tiver um X no canto de cima (a página abriu por outro app), toque nos três pontinhos e em "Abrir no Chrome" primeiro.', 'No Chrome, toque nos três pontinhos, no canto de cima.', 'Escolha "Instalar app" (ou "Adicionar à tela inicial" e depois "Instalar"). O LIVRE aparece com ícone próprio.'],
     };
     return {
       title: 'Instalar no computador',
