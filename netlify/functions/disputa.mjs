@@ -41,8 +41,8 @@ export default async req => {
   try {
     const me = await userFrom(req);
     const { op, args = {} } = await req.json().catch(() => ({}));
-    const fn = OPS[op];
-    if (!fn) return json({ error: 'Operação desconhecida.' }, 400);
+    const fn = typeof op === 'string' && Object.hasOwn(OPS, op) ? OPS[op] : null;
+    if (typeof fn !== 'function') return json({ error: 'Operação desconhecida.' }, 400);
     return json({ result: (await fn(me, args, db())) ?? null });
   } catch (e) {
     if (e instanceof HttpError) return json({ error: e.message }, e.status);
