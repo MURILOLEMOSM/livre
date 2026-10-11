@@ -257,6 +257,7 @@ const cloud = (() => {
 
     const reg = await navigator.serviceWorker.ready;
     let sub = await reg.pushManager.getSubscription();
+    if (sub && !sameKey(sub)) { await dropSub(sub); sub = null; }   // chave VAPID trocou: inscreve de novo
     if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyToBytes(cfg.vapidPublicKey) });
     const j = sub.toJSON();
 
@@ -268,6 +269,41 @@ const cloud = (() => {
       }, { merge: true });
     } catch (err) { fail(err); }
     return true;
+  }
+
+  /** A inscrição deste aparelho foi feita com a chave VAPID atual? */
+  function sameKey(sub) {
+    const k = sub.options?.applicationServerKey;
+    if (!k) return true;   // navegador não informa: deixa como está
+    const a = new Uint8Array(k), b = keyToBytes(cfg.vapidPublicKey);
+    return a.length === b.length && a.every((v, i) => v === b[i]);
+  }
+
+  async function dropSub(sub) {
+    if (user && fs) await fs.doc(`users/${user.id}/push/${await hash(sub.endpoint)}`).delete().catch(() => {});
+    await sub.unsubscribe().catch(() => {});
+  }
+
+  /**
+   * Se a chave VAPID mudou, refaz a inscrição sozinho mantendo o horário
+   * e o alerta escolhidos. Roda ao abrir o app, sem pedir nada à pessoa.
+   */
+  async function renewPushIfKeyChanged() {
+    try {
+      if (mode === 'local' || !user || !fs || !cfg.vapidPublicKey) return;
+      if (!('serviceWorker' in navigator) || !('PushManager' in window) || Notification.permission !== 'granted') return;
+      const reg = await navigator.serviceWorker.getRegistration();
+      const old = await reg?.pushManager?.getSubscription();
+      if (!old || sameKey(old)) return;
+      const oldRef = fs.doc(`users/${user.id}/push/${await hash(old.endpoint)}`);
+      const prev = (await oldRef.get().catch(() => null))?.data();
+      await dropSub(old);
+      if (!prev) return;   // não tinha lembrete salvo
+      const sub = (await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyToBytes(cfg.vapidPublicKey) })).toJSON();
+      const keep = { notify_hour: prev.notify_hour, tz, last_sent_on: prev.last_sent_on ?? null, createdAt: Date.now() };
+      for (const k of ['weak_dow', 'weak_hour', 'last_weak_on']) if (k in prev) keep[k] = prev[k];
+      await fs.doc(`users/${user.id}/push/${await hash(sub.endpoint)}`).set({ endpoint: sub.endpoint, p256dh: sub.keys.p256dh, auth: sub.keys.auth, ...keep }, { merge: true });
+    } catch (err) { console.warn('[LIVRE] Não renovou o lembrete agora:', err.message); }
   }
 
   async function disablePush() {
@@ -319,11 +355,12 @@ const cloud = (() => {
     get user() { return user; },
     async init() {
       user = await impl.init();
+      if (user) renewPushIfKeyChanged();   // em segundo plano
       return user;
     },
     onAuthChange(fn) { listeners.push(fn); },
     async signUp(email, password) { const r = await impl.signUp(email, password); user = r.user; return r; },
-    async signIn(email, password) { user = await impl.signIn(email, password); return user; },
+    async signIn(email, password) { user = await impl.signIn(email, password); renewPushIfKeyChanged(); return user; },
     async signInDemo() { user = await local.signInDemo(); return user; },
     resetPassword: email => impl.resetPassword(email),
     updatePassword: pw => impl.updatePassword(pw),

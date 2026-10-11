@@ -6,7 +6,7 @@
    Ao mudar qualquer arquivo do app, suba o número da versão.
    ========================================================= */
 
-const VERSION = 'livre-v9';
+const VERSION = 'livre-v10';
 const SHELL_CACHE = `${VERSION}-shell`;
 const CDN_CACHE = `${VERSION}-cdn`;
 
