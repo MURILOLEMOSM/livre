@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Livre Fit — Academia</title>
+  <meta name="description" content="Livre Fit, treino sem amarras: academia com planos sem fidelidade, aulas coletivas, musculação e app de treino.">
+  <meta name="theme-color" content="#0f1115">
+  <link rel="icon" href="marca/icone-app.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+  <div class="progresso" aria-hidden="true"><i id="progresso"></i></div>
+
+  <header class="topo" id="topo">
+    <div class="wrap topo-in">
+      <a class="marca" href="#inicio" aria-label="Livre Fit, início">
+        <svg class="marca-ico" viewBox="0 0 64 64" aria-hidden="true"><path d="M53.25 26.31A22 22 0 1 1 37.69 10.75" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round"/><circle class="marca-ponto" cx="53.9" cy="10.1" r="6.5" fill="currentColor"/></svg>
+        <span>livre<b>fit</b></span>
+      </a>
+      <button class="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Abrir menu">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="menu" id="menu" aria-label="Principal">
+        <a href="#planos">Planos</a>
+        <a href="#modalidades">Modalidades</a>
+        <a href="#aulas">Aulas</a>
+        <a href="#unidades">Unidades</a>
+        <a href="#app">App</a>
+        <a href="#duvidas">Dúvidas</a>
+        <a class="btn btn-sm" href="#matricula" data-plano="Aula experimental">Aula grátis</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <!-- HERO -->
+    <section class="hero" id="inicio">
+      <div class="wrap hero-in">
+        <div class="hero-txt">
+          <p class="selo">Sem fidelidade · sem taxa de matrícula</p>
+          <h1><span class="l1">Treine do seu jeito.</span><br><span class="l2 grad">Sem amarras.</span></h1>
+          <p class="lead">Musculação, aulas coletivas, funcional e piscina em uma só academia. Planos sem fidelidade, acesso por app e unidades abertas até tarde.</p>
+          <div class="hero-cta">
+            <a class="btn" href="#matricula" data-plano="Aula experimental">Agendar aula grátis</a>
+            <a class="btn btn-ghost" href="#planos">Ver planos</a>
+          </div>
+          <ul class="hero-num">
+            <li><strong data-count="24">24</strong><span>unidades</span></li>
+            <li><strong data-count="40" data-suf="+">40+</strong><span>aulas por semana</span></li>
+            <li><strong>5h–23h</strong><span>funcionamento</span></li>
+          </ul>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <svg viewBox="0 0 400 420">
+            <circle class="gira" cx="200" cy="215" r="185" fill="none" stroke="#C6FF3D" stroke-width="1.5" stroke-dasharray="4 12" opacity=".5"/>
+            <g class="anilha" transform="translate(40 55) scale(5)">
+              <path d="M53.25 26.31A22 22 0 1 1 37.69 10.75" fill="none" stroke="#C6FF3D" stroke-width="10" stroke-linecap="round"/>
+            </g>
+            <circle class="ponto" cx="309.5" cy="105.5" r="32.5" fill="#FF6B4A"/>
+            <g font-family="Archivo, sans-serif" font-weight="900" fill="#F4F1EA">
+              <text x="200" y="205" font-size="30" text-anchor="middle">1ª AULA</text>
+              <text x="200" y="245" font-size="30" text-anchor="middle" fill="#C6FF3D">GRÁTIS</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- VANTAGENS -->
+    <section class="faixa" aria-label="Vantagens">
+      <div class="wrap faixa-in">
+        <div><b>Sem fidelidade</b><span>no plano Livre</span></div>
+        <div><b>Avaliação física</b><span>inclusa na matrícula</span></div>
+        <div><b>Treino no app</b><span>montado por professor</span></div>
+        <div><b>Leve um amigo</b><span>nos planos Plus e Total</span></div>
+      </div>
+    </section>
+
+    <!-- PLANOS -->
+    <section class="secao" id="planos">
+      <div class="wrap">
+        <header class="sec-cab">
+          <p class="kicker">Planos</p>
+          <h2>Escolha o plano que cabe na sua rotina</h2>
+          <div class="toggle" role="radiogroup" aria-label="Forma de pagamento">
+            <button role="radio" aria-checked="true" data-ciclo="mensal">Mensal</button>
+            <button role="radio" aria-checked="false" data-ciclo="anual">Anual <em>-15%</em></button>
+          </div>
+        </header>
+
+        <div class="planos">
+          <article class="plano">
+            <h3>Livre</h3>
+            <p class="plano-desc">Para quem treina sempre na mesma unidade.</p>
+            <p class="preco"><small>R$</small><span data-mensal="99,90" data-anual="84,90">99,90</span><small>/mês</small></p>
+            <ul>
+              <li>Musculação e área de cardio</li>
+              <li>1 unidade à sua escolha</li>
+              <li>Treino no app</li>
+              <li>Cancele quando quiser</li>
+            </ul>
+            <a class="btn btn-ghost" href="#matricula" data-plano="Livre">Quero esse</a>
+          </article>
+
+          <article class="plano destaque">
+            <p class="tag">Mais escolhido</p>
+            <h3>Plus</h3>
+            <p class="plano-desc">Todas as unidades e todas as aulas coletivas.</p>
+            <p class="preco"><small>R$</small><span data-mensal="139,90" data-anual="118,90">139,90</span><small>/mês</small></p>
+            <ul>
+              <li>Tudo do Livre</li>
+              <li>Acesso a todas as unidades</li>
+              <li>Aulas coletivas ilimitadas</li>
+              <li>Leve 1 amigo 4x por mês</li>
+              <li>Cadeira de massagem</li>
+            </ul>
+            <a class="btn" href="#matricula" data-plano="Plus">Quero esse</a>
+          </article>
+
+          <article class="plano">
+            <h3>Total</h3>
+            <p class="plano-desc">A experiência completa, com piscina e reavaliações.</p>
+            <p class="preco"><small>R$</small><span data-mensal="189,90" data-anual="161,40">189,90</span><small>/mês</small></p>
+            <ul>
+              <li>Tudo do Plus</li>
+              <li>Natação e hidroginástica</li>
+              <li>Reavaliação física a cada 3 meses</li>
+              <li>Leve 1 amigo quando quiser</li>
+              <li>Congelamento de até 60 dias</li>
+            </ul>
+            <a class="btn btn-ghost" href="#matricula" data-plano="Total">Quero esse</a>
+          </article>
+        </div>
+        <p class="nota">Valores ilustrativos. No pagamento anual, o total é cobrado em 12 parcelas no cartão.</p>
+      </div>
+    </section>
+
+    <!-- MODALIDADES -->
+    <section class="secao alt" id="modalidades">
+      <div class="wrap">
+        <header class="sec-cab">
+          <p class="kicker">Modalidades</p>
+          <h2>Mais de 15 jeitos de se mexer</h2>
+          <div class="filtros" role="group" aria-label="Filtrar modalidades">
+            <button class="ativo" data-filtro="todas">Todas</button>
+            <button data-filtro="forca">Força</button>
+            <button data-filtro="cardio">Cardio</button>
+            <button data-filtro="mente">Corpo e mente</button>
+            <button data-filtro="agua">Água</button>
+          </div>
+        </header>
+        <div class="mods" id="mods"></div>
+      </div>
+    </section>
+
+    <!-- AULAS -->
+    <section class="secao" id="aulas">
+      <div class="wrap">
+        <header class="sec-cab">
+          <p class="kicker">Grade de aulas</p>
+          <h2>Aulas coletivas da semana</h2>
+          <div class="dias" role="tablist" aria-label="Dia da semana" id="dias"></div>
+        </header>
+        <div class="grade" id="grade" role="tabpanel" aria-live="polite"></div>
+        <p class="nota">Suas reservas ficam salvas neste navegador.</p>
+      </div>
+    </section>
+
+    <!-- UNIDADES -->
+    <section class="secao alt" id="unidades">
+      <div class="wrap">
+        <header class="sec-cab">
+          <p class="kicker">Unidades</p>
+          <h2>Encontre a Livre Fit mais perto</h2>
+        </header>
+        <div class="busca">
+          <label for="q" class="sr">Buscar por cidade, bairro ou nome</label>
+          <input id="q" type="search" placeholder="Digite cidade, bairro ou nome da unidade" autocomplete="off">
+          <select id="uf" aria-label="Estado">
+            <option value="">Todos os estados</option>
+          </select>
+          <label class="chk"><input type="checkbox" id="piscina"> Com piscina</label>
+          <label class="chk"><input type="checkbox" id="h24"> Aberta 24h</label>
+        </div>
+        <p class="contagem" id="contagem" aria-live="polite"></p>
+        <div class="unis" id="unis"></div>
+        <p class="nota">Unidades de exemplo, para demonstração. Toque na estrela para favoritar sua unidade.</p>
+      </div>
+    </section>
+
+    <!-- APP -->
+    <section class="secao app" id="app">
+      <div class="wrap app-in">
+        <div>
+          <p class="kicker">App Livre Fit</p>
+          <h2>A academia inteira no seu bolso</h2>
+          <ul class="app-lista">
+            <li><b>Entrada sem cartão</b> — libere a catraca pelo QR code.</li>
+            <li><b>Treino do dia</b> — séries, cargas e vídeos de cada exercício.</li>
+            <li><b>Reserve aulas</b> — garanta sua vaga na bike ou no funcional.</li>
+            <li><b>Lotação em tempo real</b> — veja se a unidade está cheia antes de sair.</li>
+            <li><b>Evolução</b> — medidas e cargas em gráficos simples.</li>
+          </ul>
+          <div class="hero-cta" style="margin:24px 0 0"><a class="btn" href="app/">Abrir o app do aluno</a></div>
+          <p class="nota">Funciona no navegador e pode ser instalado na tela inicial do celular.</p>
+        </div>
+        <div class="fone" aria-hidden="true">
+          <div class="fone-tela">
+            <p class="f-oi">Bom dia, Ana</p>
+            <div class="f-card f-qr"><span></span><p>Toque para entrar</p></div>
+            <div class="f-card">
+              <p class="f-tit">Treino B · Costas e bíceps</p>
+              <div class="f-barra"><i style="width:60%"></i></div>
+              <p class="f-sub">6 de 10 exercícios</p>
+            </div>
+            <div class="f-card f-lot">
+              <p class="f-tit">Lotação agora</p>
+              <div class="f-bars"><i style="height:30%"></i><i style="height:55%"></i><i style="height:80%"></i><i style="height:45%"></i><i class="ag" style="height:35%"></i><i style="height:20%"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DÚVIDAS -->
+    <section class="secao" id="duvidas">
+      <div class="wrap estreito">
+        <header class="sec-cab">
+          <p class="kicker">Dúvidas</p>
+          <h2>Perguntas frequentes</h2>
+        </header>
+        <div class="faq">
+          <details name="faq"><summary>Tem taxa de cancelamento?</summary><p>No plano Livre, não: basta cancelar pelo app com 30 dias de antecedência. No pagamento anual, o cancelamento antes de 12 meses tem multa de 10% sobre as parcelas restantes.</p></details>
+          <details name="faq"><summary>Posso fazer uma aula experimental?</summary><p>Sim. Agende pelo formulário de matrícula escolhendo "Aula experimental" e venha com documento com foto.</p></details>
+          <details name="faq"><summary>Preciso de atestado médico?</summary><p>Recomendamos, e para natação e hidroginástica o exame dermatológico é obrigatório. A avaliação física da matrícula não substitui consulta médica.</p></details>
+          <details name="faq"><summary>Menores de idade podem treinar?</summary><p>A partir de 14 anos, com autorização assinada pelo responsável legal na recepção.</p></details>
+          <details name="faq"><summary>Posso congelar o plano?</summary><p>No plano Total, até 60 dias por ano. Nos demais, até 30 dias mediante atestado médico.</p></details>
+          <details name="faq"><summary>Quais formas de pagamento são aceitas?</summary><p>Cartão de crédito recorrente, cartão de débito e Pix (no plano anual à vista).</p></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- MATRÍCULA -->
+    <section class="secao alt" id="matricula">
+      <div class="wrap estreito">
+        <header class="sec-cab">
+          <p class="kicker">Matrícula</p>
+          <h2>Comece hoje</h2>
+          <p class="lead">Deixe seus dados e a equipe da unidade entra em contato para finalizar.</p>
+        </header>
+        <form class="form" id="form" novalidate>
+          <div class="campo">
+            <label for="f-nome">Nome completo</label>
+            <input id="f-nome" name="nome" required autocomplete="name">
+          </div>
+          <div class="campo">
+            <label for="f-email">E-mail</label>
+            <input id="f-email" name="email" type="email" required autocomplete="email">
+          </div>
+          <div class="campo">
+            <label for="f-tel">Celular</label>
+            <input id="f-tel" name="tel" type="tel" required autocomplete="tel" placeholder="(11) 99999-9999">
+          </div>
+          <div class="campo">
+            <label for="f-plano">Interesse</label>
+            <select id="f-plano" name="plano">
+              <option>Livre</option><option selected>Plus</option><option>Total</option><option>Aula experimental</option>
+            </select>
+          </div>
+          <div class="campo full">
+            <label for="f-uni">Unidade</label>
+            <select id="f-uni" name="unidade"></select>
+          </div>
+          <label class="chk full"><input type="checkbox" required id="f-ok"> Aceito ser contatado(a) pela Livre Fit.</label>
+          <button class="btn full" type="submit">Enviar</button>
+          <p class="msg full" id="msg" role="status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <div class="wrap rod-in">
+      <div>
+        <a class="marca" href="#inicio" aria-label="Livre Fit, início"><svg class="marca-ico" viewBox="0 0 64 64" aria-hidden="true"><path d="M53.25 26.31A22 22 0 1 1 37.69 10.75" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round"/><circle class="marca-ponto" cx="53.9" cy="10.1" r="6.5" fill="currentColor"/></svg><span>livre<b>fit</b></span></a>
+        <p>Treino sem amarras.</p>
+      </div>
+      <nav aria-label="Rodapé">
+        <a href="#planos">Planos</a><a href="#unidades">Unidades</a><a href="#duvidas">Dúvidas</a><a href="marca/">Identidade visual</a><a href="../privacidade.html">Privacidade</a>
+      </nav>
+      <p class="copy">© <span id="ano">2026</span> Livre Fit. Site demonstrativo.</p>
+    </div>
+  </footer>
+  <button class="sobe" id="sobe" aria-label="Voltar ao topo" hidden>↑</button>
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+</body>
+</html>

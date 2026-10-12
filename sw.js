@@ -89,6 +89,9 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(request.url);
 
+  // O site da academia (/academia/) é independente do app: não passa pelo cache
+  if (url.pathname.startsWith('/academia/')) return;
+
   // Navegação (abrir o app): tenta a rede, cai para o index em cache offline
   if (request.mode === 'navigate') {
     event.respondWith(
