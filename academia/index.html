@@ -15,6 +15,7 @@
 </head>
 <body>
   <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+  <div class="progresso" aria-hidden="true"><i id="progresso"></i></div>
 
   <header class="topo" id="topo">
     <div class="wrap topo-in">
@@ -43,15 +44,15 @@
       <div class="wrap hero-in">
         <div class="hero-txt">
           <p class="selo">Sem taxa de matrícula este mês</p>
-          <h1>Treine do seu jeito.<br><span>Sem amarras.</span></h1>
+          <h1><span class="l1">Treine do seu jeito.</span><br><span class="l2 grad">Sem amarras.</span></h1>
           <p class="lead">Musculação, aulas coletivas, funcional e piscina em uma só academia. Planos sem fidelidade, acesso por app e unidades abertas até tarde.</p>
           <div class="hero-cta">
             <a class="btn" href="#planos">Ver planos</a>
             <a class="btn btn-ghost" href="#unidades">Achar unidade perto</a>
           </div>
           <ul class="hero-num">
-            <li><strong>24</strong><span>unidades</span></li>
-            <li><strong>40+</strong><span>aulas por semana</span></li>
+            <li><strong data-count="24">24</strong><span>unidades</span></li>
+            <li><strong data-count="40" data-suf="+">40+</strong><span>aulas por semana</span></li>
             <li><strong>5h–23h</strong><span>funcionamento</span></li>
           </ul>
         </div>
@@ -63,15 +64,15 @@
               </linearGradient>
             </defs>
             <circle cx="210" cy="210" r="170" fill="url(#g1)" opacity=".14"/>
-            <circle cx="210" cy="210" r="120" fill="none" stroke="url(#g1)" stroke-width="2" stroke-dasharray="6 10"/>
+            <circle class="gira" cx="210" cy="210" r="120" fill="none" stroke="url(#g1)" stroke-width="2" stroke-dasharray="6 10"/>
             <!-- halter -->
-            <g transform="translate(70 180) rotate(-18 130 30)">
+            <g class="flutua"><g transform="translate(70 180) rotate(-18 130 30)">
               <rect x="0" y="0" width="34" height="80" rx="8" fill="#c6ff3d"/>
               <rect x="38" y="10" width="22" height="60" rx="6" fill="#c6ff3d" opacity=".75"/>
               <rect x="60" y="33" width="140" height="14" rx="7" fill="#e9ecf2"/>
               <rect x="200" y="10" width="22" height="60" rx="6" fill="#c6ff3d" opacity=".75"/>
               <rect x="226" y="0" width="34" height="80" rx="8" fill="#c6ff3d"/>
-            </g>
+            </g></g>
             <g font-family="Archivo, sans-serif" font-weight="900" fill="#e9ecf2">
               <text x="80" y="110" font-size="22" opacity=".9">FORÇA</text>
               <text x="250" y="330" font-size="22" opacity=".9">RITMO</text>
@@ -178,6 +179,7 @@
           <div class="dias" role="tablist" aria-label="Dia da semana" id="dias"></div>
         </header>
         <div class="grade" id="grade" role="tabpanel" aria-live="polite"></div>
+        <p class="nota">Suas reservas ficam salvas neste navegador.</p>
       </div>
     </section>
 
@@ -199,7 +201,7 @@
         </div>
         <p class="contagem" id="contagem" aria-live="polite"></p>
         <div class="unis" id="unis"></div>
-        <p class="nota">Unidades de exemplo, para demonstração.</p>
+        <p class="nota">Unidades de exemplo, para demonstração. Toque na estrela para favoritar sua unidade.</p>
       </div>
     </section>
 
@@ -244,12 +246,12 @@
           <h2>Perguntas frequentes</h2>
         </header>
         <div class="faq">
-          <details><summary>Tem taxa de cancelamento?</summary><p>No plano Livre, não: basta cancelar pelo app com 30 dias de antecedência. No pagamento anual, o cancelamento antes de 12 meses tem multa de 10% sobre as parcelas restantes.</p></details>
-          <details><summary>Posso fazer uma aula experimental?</summary><p>Sim. Agende pelo formulário de matrícula escolhendo "Aula experimental" e venha com documento com foto.</p></details>
-          <details><summary>Preciso de atestado médico?</summary><p>Recomendamos, e para natação e hidroginástica o exame dermatológico é obrigatório. A avaliação física da matrícula não substitui consulta médica.</p></details>
-          <details><summary>Menores de idade podem treinar?</summary><p>A partir de 14 anos, com autorização assinada pelo responsável legal na recepção.</p></details>
-          <details><summary>Posso congelar o plano?</summary><p>No plano Total, até 60 dias por ano. Nos demais, até 30 dias mediante atestado médico.</p></details>
-          <details><summary>Quais formas de pagamento são aceitas?</summary><p>Cartão de crédito recorrente, cartão de débito e Pix (no plano anual à vista).</p></details>
+          <details name="faq"><summary>Tem taxa de cancelamento?</summary><p>No plano Livre, não: basta cancelar pelo app com 30 dias de antecedência. No pagamento anual, o cancelamento antes de 12 meses tem multa de 10% sobre as parcelas restantes.</p></details>
+          <details name="faq"><summary>Posso fazer uma aula experimental?</summary><p>Sim. Agende pelo formulário de matrícula escolhendo "Aula experimental" e venha com documento com foto.</p></details>
+          <details name="faq"><summary>Preciso de atestado médico?</summary><p>Recomendamos, e para natação e hidroginástica o exame dermatológico é obrigatório. A avaliação física da matrícula não substitui consulta médica.</p></details>
+          <details name="faq"><summary>Menores de idade podem treinar?</summary><p>A partir de 14 anos, com autorização assinada pelo responsável legal na recepção.</p></details>
+          <details name="faq"><summary>Posso congelar o plano?</summary><p>No plano Total, até 60 dias por ano. Nos demais, até 30 dias mediante atestado médico.</p></details>
+          <details name="faq"><summary>Quais formas de pagamento são aceitas?</summary><p>Cartão de crédito recorrente, cartão de débito e Pix (no plano anual à vista).</p></details>
         </div>
       </div>
     </section>
@@ -305,5 +307,7 @@
       <p class="copy">© <span id="ano">2026</span> Livre Fit. Site demonstrativo.</p>
     </div>
   </footer>
+  <button class="sobe" id="sobe" aria-label="Voltar ao topo" hidden>↑</button>
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
 </body>
 </html>

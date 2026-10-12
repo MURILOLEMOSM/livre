@@ -1,3 +1,4 @@
+@supports (interpolate-size: allow-keywords) { :root { interpolate-size: allow-keywords; } }
 :root {
   --bg: #0f1115;
   --bg2: #161920;
@@ -57,7 +58,7 @@ button, input, select { font: inherit; color: inherit; }
 .hero-in { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center; }
 .selo { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(198, 255, 61, .12); color: var(--acento); font-weight: 600; font-size: .875rem; margin: 0 0 20px; }
 .hero h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; }
-.hero h1 span { background: linear-gradient(90deg, var(--acento), var(--acento2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero h1 .grad { background: linear-gradient(90deg, var(--acento), var(--acento2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .lead { color: var(--sub); font-size: 1.125rem; max-width: 56ch; }
 .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 40px; }
 .hero-num { display: flex; gap: 32px; list-style: none; padding: 0; margin: 0; }
@@ -208,7 +209,135 @@ button, input, select { font: inherit; color: inherit; }
   .aula .vagas { grid-column: 2; justify-self: start; }
   .rod-in { grid-template-columns: 1fr; }
 }
+
+/* ===================== Animações e interação ===================== */
+
+/* Barra de progresso de leitura */
+.progresso { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 60; pointer-events: none; }
+.progresso i { display: block; height: 100%; width: 100%; transform-origin: 0 50%; transform: scaleX(0); background: linear-gradient(90deg, var(--acento), var(--acento2)); }
+
+/* Link ativo no menu */
+.menu a[aria-current="true"]:not(.btn) { color: var(--txt); }
+@media (min-width: 821px) {
+  .menu a:not(.btn) { position: relative; }
+  .menu a:not(.btn)::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 2px; border-radius: 2px; background: var(--acento); transform: scaleX(0); transition: transform .25s; }
+  .menu a[aria-current="true"]:not(.btn)::after, .menu a:not(.btn):hover::after { transform: scaleX(1); }
+}
+
+/* Entrada do hero */
+@keyframes sobeFade { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+.hero .selo, .hero h1 .l1, .hero h1 .l2, .hero .lead, .hero-cta, .hero-num { display: inline-block; animation: sobeFade .8s cubic-bezier(.2, .7, .2, 1) both; }
+.hero .lead, .hero-cta, .hero-num { display: block; }
+.hero h1 .l1 { animation-delay: .08s; }
+.hero h1 .l2 { animation-delay: .2s; }
+.hero .lead { animation-delay: .32s; }
+.hero-cta { animation-delay: .44s; }
+.hero-num { animation-delay: .56s; }
+.hero-cta.hero-cta { display: flex; }
+.hero-num.hero-num { display: flex; }
+.hero h1 .grad { background-size: 200% 100%; animation: sobeFade .8s .2s cubic-bezier(.2, .7, .2, 1) both, brilho 6s 1s ease-in-out infinite; }
+@keyframes brilho { 50% { background-position: 100% 0; } }
+.hero-art { animation: sobeFade 1s .3s both; }
+.hero-art .gira { transform-origin: 210px 210px; animation: gira 40s linear infinite; }
+.hero-art .flutua { animation: flutua 5s ease-in-out infinite; }
+@keyframes gira { to { transform: rotate(360deg); } }
+@keyframes flutua { 50% { transform: translateY(-14px); } }
+.fone { animation: flutua 6s ease-in-out infinite; }
+
+/* Revelar ao rolar */
+.revela { opacity: 0; transform: translateY(28px); transition: opacity .7s cubic-bezier(.2, .7, .2, 1), transform .7s cubic-bezier(.2, .7, .2, 1); transition-delay: calc(var(--i, 0) * 70ms); }
+.revela.visto { opacity: 1; transform: none; }
+
+/* Itens re-renderizados (filtros, dias, busca) */
+@keyframes entra { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
+.entra { animation: entra .45s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--i, 0) * 45ms); }
+
+/* Brilho que segue o mouse nos cards */
+.plano, .mod, .uni { overflow: hidden; isolation: isolate; }
+.plano::after, .mod::after, .uni::after { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .3s; background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), rgba(198, 255, 61, .12), transparent 60%); pointer-events: none; }
+.plano:hover::after, .mod:hover::after, .uni:hover::after { opacity: 1; }
+.mod, .uni { position: relative; }
+.plano { transition: transform .3s, border-color .3s; overflow: visible; }
+.plano::after { border-radius: inherit; }
+@media (hover: hover) { .plano:hover { transform: translateY(-6px); } }
+.mod:hover .mod-ico { animation: pula .5s; }
+@keyframes pula { 40% { transform: translateY(-6px) rotate(-8deg); } }
+
+/* Preço trocando */
+.preco span { display: inline-block; font-variant-numeric: tabular-nums; }
+.preco span.troca { animation: troca .4s; }
+@keyframes troca { 0% { opacity: .3; transform: translateY(-8px); } 100% { opacity: 1; transform: none; } }
+.economia { display: block; height: 1.4em; margin: -12px 0 16px; font-size: .8rem; font-weight: 600; color: var(--acento2); opacity: 0; transition: opacity .3s; }
+.anual .economia { opacity: 1; }
+
+/* Ripple nos botões */
+.btn { position: relative; overflow: hidden; }
+.onda { position: absolute; border-radius: 50%; background: currentColor; opacity: .25; transform: scale(0); animation: onda .6s ease-out forwards; pointer-events: none; }
+@keyframes onda { to { transform: scale(2.6); opacity: 0; } }
+
+/* Aulas: reserva e "agora" */
+.aula { grid-template-columns: 80px 1fr auto auto; transition: border-color .25s, background .25s; }
+.aula.passou { opacity: .45; }
+.aula.proxima { border-color: var(--acento); }
+.aula .selo-prox { display: inline-block; margin-left: 8px; font-size: .7rem; font-weight: 700; color: var(--tinta); background: var(--acento); padding: 2px 8px; border-radius: 999px; vertical-align: middle; animation: pulsa 1.6s ease-in-out infinite; }
+@keyframes pulsa { 50% { box-shadow: 0 0 0 6px rgba(198, 255, 61, 0); } 0%, 100% { box-shadow: 0 0 0 0 rgba(198, 255, 61, .5); } }
+.reservar { min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--linha); background: none; cursor: pointer; font-weight: 600; font-size: .85rem; transition: background .2s, color .2s, border-color .2s, transform .15s; }
+.reservar:hover { border-color: var(--acento); }
+.reservar:active { transform: scale(.94); }
+.reservar[aria-pressed="true"] { background: var(--acento); border-color: var(--acento); color: var(--tinta); }
+.reservar:disabled { opacity: .4; cursor: not-allowed; }
+.aula.reservada { background: linear-gradient(90deg, rgba(198, 255, 61, .08), var(--card) 60%); }
+
+/* Unidades: aberta agora e favorita */
+.uni-cab { display: flex; align-items: start; justify-content: space-between; gap: 8px; }
+.fav { flex: none; width: 36px; height: 36px; margin: -6px -6px 0 0; border: 0; border-radius: 50%; background: none; cursor: pointer; font-size: 1.25rem; color: var(--sub); transition: color .2s, transform .2s; }
+.fav:hover { color: var(--txt); }
+.fav[aria-pressed="true"] { color: var(--acento); animation: estrela .45s; }
+@keyframes estrela { 40% { transform: scale(1.35) rotate(15deg); } }
+.uni.favorita { border-color: var(--acento); }
+.chips .aberta { border-color: var(--acento2); color: var(--acento2); }
+.chips .aberta::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 6px; border-radius: 50%; background: currentColor; vertical-align: middle; animation: pulsa2 1.6s infinite; }
+@keyframes pulsa2 { 50% { opacity: .3; } }
+.chips .fechada { color: #ff8a8a; border-color: rgba(255, 138, 138, .4); }
+
+/* FAQ abrindo suave */
+.faq details::details-content { height: 0; overflow: clip; transition: height .3s ease, content-visibility .3s allow-discrete; }
+.faq details[open]::details-content { height: auto; }
+.faq summary:hover { color: var(--acento); }
+
+/* Formulário */
+.form input, .form select { transition: border-color .2s, box-shadow .2s; }
+.form input:focus, .form select:focus, .busca input:focus, .busca select:focus { outline: none; border-color: var(--acento); box-shadow: 0 0 0 3px rgba(198, 255, 61, .18); }
+.form input[aria-invalid="true"] { animation: treme .35s; }
+@keyframes treme { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.btn.enviando { pointer-events: none; color: transparent; }
+.btn.enviando::before { content: ""; position: absolute; width: 20px; height: 20px; border-radius: 50%; border: 2.5px solid var(--tinta); border-right-color: transparent; animation: gira .7s linear infinite; }
+
+/* Voltar ao topo */
+.sobe { position: fixed; right: 16px; bottom: 16px; z-index: 40; width: 48px; height: 48px; border-radius: 50%; border: 0; background: var(--acento); color: var(--tinta); font-size: 1.25rem; font-weight: 900; cursor: pointer; box-shadow: 0 10px 30px -10px rgba(0, 0, 0, .6); opacity: 0; transform: translateY(16px) scale(.8); transition: opacity .25s, transform .25s; }
+.sobe.mostra { opacity: 1; transform: none; }
+
+/* Toasts */
+.toasts { position: fixed; left: 50%; bottom: 20px; z-index: 70; display: grid; gap: 8px; transform: translateX(-50%); width: min(420px, calc(100% - 32px)); pointer-events: none; }
+.toast { padding: 14px 18px; border-radius: 12px; background: var(--txt); color: var(--tinta); font-weight: 600; box-shadow: 0 16px 40px -16px rgba(0, 0, 0, .7); animation: toastIn .35s cubic-bezier(.2, .7, .2, 1) both; }
+.toast.sai { animation: toastOut .3s forwards; }
+@keyframes toastIn { from { opacity: 0; transform: translateY(16px) scale(.96); } }
+@keyframes toastOut { to { opacity: 0; transform: translateY(8px); } }
+
+/* Confete do formulário */
+.confete { position: fixed; top: 0; left: 0; width: 8px; height: 12px; z-index: 80; pointer-events: none; border-radius: 2px; animation: cai 1.4s cubic-bezier(.2, .6, .4, 1) forwards; }
+@keyframes cai { to { transform: translate(var(--dx), var(--dy)) rotate(var(--r)); opacity: 0; } }
+
+@media (max-width: 560px) {
+  .aula { grid-template-columns: 56px 1fr auto; gap: 4px 12px; padding: 14px 16px; }
+  .aula time { grid-row: 1 / span 2; font-size: 1.1rem; }
+  .aula .vagas { grid-column: 2; grid-row: 2; justify-self: start; }
+  .aula .reservar { grid-column: 3; grid-row: 1 / span 2; }
+  .sobe { bottom: 16px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  * { transition: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .revela { opacity: 1; transform: none; }
 }
