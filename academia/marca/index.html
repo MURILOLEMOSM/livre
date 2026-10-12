@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Livre Fit · Identidade Visual</title>
+  <meta name="description" content="Guia da marca Livre Fit: logo, cores, tipografia e voz.">
+  <link rel="icon" href="icone-app.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --lima: #c6ff3d; --grafite: #0f1115; --areia: #f4f1ea; --coral: #ff6b4a; --menta: #3dffb0; --carvao: #1c2029; --nevoa: #9aa3b2; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 17px/1.6 Inter, system-ui, sans-serif; color: var(--grafite); background: var(--areia); }
+    h1, h2, h3 { font-family: Archivo, sans-serif; font-weight: 900; letter-spacing: -.02em; line-height: 1.05; margin: 0 0 .4em; }
+    h2 { font-size: clamp(1.9rem, 4vw, 3rem); }
+    .wrap { width: min(1120px, 100% - 32px); margin-inline: auto; }
+    section { padding: 80px 0; }
+    .escuro { background: var(--grafite); color: var(--areia); }
+    .k { font-size: .78rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--coral); margin: 0 0 10px; }
+    .escuro .k { color: var(--lima); }
+    p.sub { max-width: 62ch; color: #4a5160; }
+    .escuro p.sub { color: var(--nevoa); }
+    .capa { padding: 120px 0; }
+    .capa img { width: min(420px, 80%); display: block; margin-bottom: 40px; }
+    .capa h1 { font-size: clamp(2.6rem, 8vw, 5.5rem); }
+    .grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 32px; }
+    .card { border-radius: 22px; padding: 32px; min-height: 200px; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; }
+    .card img { max-width: 100%; height: 56px; width: auto; align-self: flex-start; }
+    .card small { font-size: .75rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; opacity: .7; }
+    .card a { color: inherit; font-weight: 600; font-size: .9rem; }
+    .regra { border: 1.5px solid #d8d3c6; border-radius: 18px; padding: 24px; }
+    .regra h3 { font-size: 1.2rem; }
+    .regra p { margin: 0; color: #4a5160; }
+    .cor { border-radius: 18px; overflow: hidden; background: var(--carvao); }
+    .cor i { display: block; height: 130px; }
+    .cor div { padding: 16px; }
+    .cor b { display: block; font-family: Archivo, sans-serif; font-weight: 900; font-size: 1.15rem; }
+    .cor code { color: var(--lima); font-size: .85rem; }
+    .cor span { display: block; color: var(--nevoa); font-size: .85rem; }
+    .fam { background: #fff; border-radius: 22px; padding: 32px; }
+    .fam .aa { font-size: 5rem; line-height: 1; margin-bottom: 12px; }
+    .pil { background: var(--carvao); border-radius: 18px; padding: 26px; }
+    .pil::before { content: ""; display: block; width: 40px; height: 6px; border-radius: 3px; background: var(--c); margin-bottom: 16px; }
+    .pil p { margin: 0; color: var(--nevoa); }
+    .dd { border: 1.5px solid var(--c); border-radius: 18px; padding: 26px; }
+    .dd p { margin: 6px 0; }
+    .btns { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+    .btn { display: inline-flex; align-items: center; min-height: 48px; padding: 0 24px; border-radius: 999px; font-weight: 600; text-decoration: none; }
+    .fontes { margin-top: 40px; font-size: .85rem; color: var(--nevoa); }
+    .fontes a { color: inherit; }
+    footer { padding: 40px 0; }
+    footer a { color: inherit; }
+  </style>
+</head>
+<body>
+  <section class="escuro capa">
+    <div class="wrap">
+      <img src="logo-escuro.svg" alt="Livre Fit">
+      <h1>Treino sem amarras.</h1>
+      <p class="sub">Guia da identidade visual · versão 1.0 · 2026. O arquivo editável está no Figma.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="k">Logo</p>
+      <h2>A anilha aberta</h2>
+      <p class="sub">O símbolo é uma anilha de peso com uma abertura. A bolinha que escapa é o aluno livre, ganhando impulso. Ele mostra a academia (o disco de peso) e a promessa da marca (sem fidelidade, sem amarras) numa forma simples, que funciona de 16 px a uma fachada.</p>
+      <div class="grid">
+        <div class="card escuro"><img src="logo-escuro.svg" alt="Logo para fundo escuro"><small>Principal · fundo escuro · <a href="logo-escuro.svg" download>baixar SVG</a></small></div>
+        <div class="card" style="background:#fff"><img src="logo-claro.svg" alt="Logo para fundo claro"><small>Fundo claro · ponto coral · <a href="logo-claro.svg" download>baixar SVG</a></small></div>
+        <div class="card" style="background:var(--lima)"><img src="icone-app.svg" alt="Ícone do app" style="height:96px"><small>Ícone do app e redes · <a href="icone-app.svg" download>baixar SVG</a></small></div>
+      </div>
+      <div class="grid">
+        <div class="regra"><h3>Área de proteção</h3><p>Deixe em volta da logo um espaço livre igual ao diâmetro da bolinha.</p></div>
+        <div class="regra"><h3>Tamanho mínimo</h3><p>Logo horizontal com 96 px de largura; símbolo sozinho com 16 px.</p></div>
+        <div class="regra"><h3>Não faça</h3><p>Não gire, não aplique sombra, não troque a fonte nem feche a anilha.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="escuro">
+    <div class="wrap">
+      <p class="k">Cores</p>
+      <h2>Energia que acolhe</h2>
+      <p class="sub">A lima traz energia e marca as ações de venda. A areia e o coral equilibram o visual escuro comum em academias, deixando a marca mais calorosa e próxima.</p>
+      <div class="grid">
+        <div class="cor"><i style="background:var(--lima)"></i><div><b>Lima</b><code>#C6FF3D</code><span>Botões e ação principal</span></div></div>
+        <div class="cor"><i style="background:var(--grafite);box-shadow:inset 0 0 0 1px #2a2f3a"></i><div><b>Grafite</b><code>#0F1115</code><span>Fundo principal</span></div></div>
+        <div class="cor"><i style="background:var(--areia)"></i><div><b>Areia</b><code>#F4F1EA</code><span>Fundo claro e texto sobre escuro</span></div></div>
+        <div class="cor"><i style="background:var(--coral)"></i><div><b>Coral</b><code>#FF6B4A</code><span>Promoções e ponto da logo clara</span></div></div>
+        <div class="cor"><i style="background:var(--menta)"></i><div><b>Menta</b><code>#3DFFB0</code><span>Apoio e status positivos</span></div></div>
+        <div class="cor"><i style="background:var(--carvao);box-shadow:inset 0 0 0 1px #2a2f3a"></i><div><b>Carvão</b><code>#1C2029</code><span>Cartões e superfícies</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <p class="k">Tipografia</p>
+      <h2>Forte no título, leve no texto</h2>
+      <div class="grid">
+        <div class="fam"><div class="aa" style="font-family:Archivo;font-weight:900">Aa</div><h3>Archivo Black</h3><p class="sub">Títulos, números e chamadas.</p></div>
+        <div class="fam"><div class="aa">Aa</div><h3>Inter</h3><p class="sub">Textos, botões e interface.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="escuro" style="background:var(--carvao)">
+    <div class="wrap">
+      <p class="k">Voz e vendas</p>
+      <h2>Parceira de treino, não sargento</h2>
+      <p class="sub">Academias perdem de 40% a 60% dos alunos por ano, e a falta de acolhimento é um dos motivos mais citados para cancelar. A Livre Fit vende pela proximidade: fala de igual para igual, sem culpa e sem promessas milagrosas. A aula experimental grátis é a principal chamada de venda.</p>
+      <div class="grid">
+        <div class="pil" style="--c:var(--lima);background:var(--grafite)"><h3>Liberdade</h3><p>Sem fidelidade, sem taxa escondida. Você fica porque gosta.</p></div>
+        <div class="pil" style="--c:var(--coral);background:var(--grafite)"><h3>Acolhimento</h3><p>Professor por perto e treino montado para você desde o primeiro dia.</p></div>
+        <div class="pil" style="--c:var(--menta);background:var(--grafite)"><h3>Progresso</h3><p>O app mostra sua evolução e comemora cada meta batida.</p></div>
+      </div>
+      <div class="grid">
+        <div class="dd" style="--c:var(--menta)"><p class="k" style="color:var(--menta)">Diga</p><p>“Venha fazer uma aula grátis.”</p><p>“Cancele quando quiser, pelo app.”</p><p>“Seu professor monta o treino com você.”</p></div>
+        <div class="dd" style="--c:var(--coral)"><p class="k">Evite</p><p>“Sem dor, sem ganho.”</p><p>“Corpo de verão em 30 dias.”</p><p>“Últimas vagas!!!” quando não for verdade.</p></div>
+      </div>
+      <div class="btns">
+        <span class="btn" style="background:var(--lima);color:var(--grafite)">Agendar aula grátis</span>
+        <span class="btn" style="box-shadow:inset 0 0 0 1.5px var(--nevoa)">Ver planos</span>
+        <span class="btn" style="background:var(--coral);color:var(--grafite)">Matricule-se sem taxa</span>
+      </div>
+      <p class="fontes">Pesquisa de mercado: <a href="https://www.em.com.br/networking-e-negocios/2026/07/7469486-retencao-de-alunos-vira-novo-campo-de-batalha-das-academias-no-brasil.html" rel="noopener">Estado de Minas (jul/2026)</a>, <a href="https://sebraepr.com.br/impulsiona/mercado-de-academias-no-brasil-dados-e-tendencias/" rel="noopener">Sebrae-PR</a>, <a href="https://1000logos.net/news/planet-fitness-logo-gets-a-workout-without-losing-its-personality/" rel="noopener">1000logos</a>.</p>
+    </div>
+  </section>
+
+  <footer><div class="wrap"><a href="../">← Voltar ao site</a></div></footer>
+</body>
+</html>

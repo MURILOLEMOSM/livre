@@ -4,7 +4,8 @@
   --bg2: #161920;
   --card: #1c2029;
   --linha: #2a2f3a;
-  --txt: #e9ecf2;
+  --txt: #f4f1ea;
+  --coral: #ff6b4a;
   --sub: #9aa3b2;
   --acento: #c6ff3d;
   --acento2: #3dffb0;
@@ -42,7 +43,10 @@ button, input, select { font: inherit; color: inherit; }
 .topo-in { display: flex; align-items: center; justify-content: space-between; height: 64px; }
 .marca { display: inline-flex; align-items: center; gap: 10px; font-family: var(--fonte-t); font-weight: 900; font-size: 1.25rem; text-decoration: none; }
 .marca b { color: var(--acento); }
-.marca-ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: var(--acento); color: var(--tinta); font-size: 1rem; }
+.marca { gap: 8px; font-size: 1.4rem; letter-spacing: -.03em; }
+.marca-ico { width: 30px; height: 30px; color: var(--acento); flex: none; }
+.marca-ico .marca-ponto { transform-origin: 53.9px 10.1px; transition: transform .3s; }
+.marca:hover .marca-ponto { transform: translate(3px, -3px) scale(1.15); }
 .menu { display: flex; align-items: center; gap: 24px; }
 .menu a:not(.btn) { text-decoration: none; color: var(--sub); font-weight: 500; }
 .menu a:not(.btn):hover { color: var(--txt); }
@@ -56,7 +60,7 @@ button, input, select { font: inherit; color: inherit; }
 .hero { position: relative; padding: 72px 0 56px; overflow: hidden; }
 .hero::before { content: ""; position: absolute; inset: -40% -20% auto auto; width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(198, 255, 61, .12), transparent 60%); pointer-events: none; }
 .hero-in { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center; }
-.selo { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(198, 255, 61, .12); color: var(--acento); font-weight: 600; font-size: .875rem; margin: 0 0 20px; }
+.selo { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(255, 107, 74, .14); color: var(--coral); font-weight: 600; font-size: .875rem; margin: 0 0 20px; }
 .hero h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; }
 .hero h1 .grad { background: linear-gradient(90deg, var(--acento), var(--acento2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .lead { color: var(--sub); font-size: 1.125rem; max-width: 56ch; }
@@ -341,3 +345,8 @@ button, input, select { font: inherit; color: inherit; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .revela { opacity: 1; transform: none; }
 }
+
+/* Identidade: anilha aberta no hero */
+.hero-art .ponto { animation: escapa 3.2s cubic-bezier(.4, 0, .2, 1) infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes escapa { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(14px, -16px) scale(1.06); } }
+.tag { background: var(--coral); color: var(--tinta); }
