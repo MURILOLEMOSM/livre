@@ -8,6 +8,9 @@
   const WHATSAPP = '';
   const FRETE_GRATIS = 599;
   const PARCELAS = 6;
+  const PIX = 0.05;        // desconto no Pix
+  const KIT_QTD = 3;       // a partir de quantas peças entra o desconto do kit
+  const KIT_DESC = 0.15;
 
   // ---------- Ilustrações das peças (SVG) ----------
   const D = 'fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1.4" stroke-linecap="round"';
@@ -91,7 +94,7 @@
       care: '100% algodão egípcio. Lavar a 30 °C, passar do avesso.',
       colors: [['Azul céu', '#a9c3e6'], ['Branco', '#f7f8fa'], ['Marinho', '#142446']],
       sizes: ['P', 'M', 'G', 'GG'], out: ['GG'], bg: '#eef1f5' },
-    { id: 'polo-riviera', name: 'Polo Piquet Riviera', cat: 'masculino', shape: 'polo', price: 329, rank: 2,
+    { id: 'polo-riviera', name: 'Polo Piquet Riviera', cat: 'masculino', shape: 'polo', price: 329, old: 399, rank: 2,
       desc: 'Piquet de algodão pima, gola firme e mangas com punho canelado. Sem logo, só qualidade.',
       care: '100% algodão pima peruano. Lavar à mão ou ciclo delicado.',
       colors: [['Marinho', '#142446'], ['Branco', '#f7f8fa'], ['Preto', '#141416']],
@@ -106,7 +109,7 @@
       care: '98% lã fria, 2% elastano. Forro em viscose. Somente lavagem a seco.',
       colors: [['Marinho', '#142446'], ['Preto', '#141416']],
       sizes: ['46', '48', '50', '52', '54'], out: ['54'], bg: '#e6eaf0' },
-    { id: 'chino', name: 'Calça Chino Alfaiataria', cat: 'masculino', shape: 'calca', price: 459, rank: 6,
+    { id: 'chino', name: 'Calça Chino Alfaiataria', cat: 'masculino', shape: 'calca', price: 459, old: 549, rank: 6,
       desc: 'Corte reto levemente afunilado, cós com passantes e vinco discreto.',
       care: '97% algodão, 3% elastano. Lavar a 30 °C.',
       colors: [['Marinho', '#142446'], ['Preto', '#141416'], ['Branco', '#f7f8fa']],
@@ -116,7 +119,7 @@
       care: '100% linho italiano. Lavar a frio, secar à sombra.',
       colors: [['Branco', '#f7f8fa'], ['Azul céu', '#a9c3e6'], ['Preto', '#141416']],
       sizes: ['P', 'M', 'G', 'GG'], bg: '#e6eaf0' },
-    { id: 'bermuda', name: 'Bermuda Linho Côte', cat: 'masculino', shape: 'bermuda', price: 299, rank: 9,
+    { id: 'bermuda', name: 'Bermuda Linho Côte', cat: 'masculino', shape: 'bermuda', price: 299, old: 369, rank: 9,
       desc: 'Comprimento acima do joelho, cós com cordão interno. Para o clube, a praia e o jantar depois.',
       care: '55% linho, 45% algodão. Lavar a frio.',
       colors: [['Branco', '#f7f8fa'], ['Marinho', '#142446'], ['Preto', '#141416']],
@@ -141,17 +144,17 @@
       care: '64% poliéster reciclado, 34% viscose, 2% elastano. Lavar a 30 °C.',
       colors: [['Branco', '#f7f8fa'], ['Preto', '#141416'], ['Marinho', '#142446']],
       sizes: ['36', '38', '40', '42', '44'], bg: '#eef1f5' },
-    { id: 'polo-fem', name: 'Polo Tricot Feminina', cat: 'feminino', shape: 'polo', price: 429, rank: 12,
+    { id: 'polo-fem', name: 'Polo Tricot Feminina', cat: 'feminino', shape: 'polo', price: 429, old: 499, rank: 12,
       desc: 'Polo em tricô canelado, manga curta e botões encapados. Com saia, jeans ou alfaiataria.',
       care: '100% viscose de bambu. Lavar à mão.',
       colors: [['Branco', '#f7f8fa'], ['Marinho', '#142446'], ['Preto', '#141416']],
       sizes: ['PP', 'P', 'M', 'G'], bg: '#e6eaf0' },
-    { id: 'bone', name: 'Boné Bordado DG Club', cat: 'acessorios', shape: 'bone', price: 189, tag: 'Mais vendido', rank: 13,
+    { id: 'bone', name: 'Boné Bordado DG Club', cat: 'acessorios', shape: 'bone', price: 189, old: 229, tag: 'Mais vendido', rank: 4,
       desc: 'Seis gomos, aba curva e monograma bordado em tom sobre tom. Fecho em couro.',
       care: '100% algodão sarja. Limpar com pano úmido.',
       colors: [['Marinho', '#142446'], ['Preto', '#141416'], ['Branco', '#f7f8fa']],
       sizes: ['Único'], bg: '#eef1f5' },
-    { id: 'mocassim', name: 'Mocassim de Camurça', cat: 'acessorios', shape: 'mocassim', price: 890, rank: 14,
+    { id: 'mocassim', name: 'Mocassim de Camurça', cat: 'acessorios', shape: 'mocassim', price: 890, old: 1090, rank: 14,
       desc: 'Camurça macia, sola de couro com borracha antiderrapante. Usa sem meia, como manda o figurino.',
       care: 'Camurça bovina. Escovar com escova própria; evitar chuva.',
       colors: [['Preto', '#141416'], ['Marinho', '#142446']],
@@ -165,11 +168,26 @@
 
   const CAT_NAME = { masculino: 'Masculino', feminino: 'Feminino', acessorios: 'Acessórios' };
 
+  // Categorias por tipo de peça (os círculos "Compre por categoria")
+  const TYPES = [
+    { key: 'polos', name: 'Polos', shapes: ['polo'], icon: ['polo', '#142446'] },
+    { key: 'camisas', name: 'Camisas', shapes: ['camisa'], icon: ['camisa', '#a9c3e6'] },
+    { key: 'tricots', name: 'Tricots', shapes: ['sueter', 'cardigan'], icon: ['sueter', '#f7f8fa'] },
+    { key: 'alfaiataria', name: 'Alfaiataria', shapes: ['blazer'], icon: ['blazer', '#142446'] },
+    { key: 'calcas', name: 'Calças', shapes: ['calca', 'pantalona'], icon: ['calca', '#141416'] },
+    { key: 'bermudas', name: 'Bermudas', shapes: ['bermuda'], icon: ['bermuda', '#f7f8fa'] },
+    { key: 'vestidos', name: 'Vestidos', shapes: ['vestido'], icon: ['vestido', '#2a4fa0'] },
+    { key: 'acessorios', name: 'Bonés e cintos', shapes: ['bone', 'cinto'], icon: ['bone', '#142446'] },
+    { key: 'calcados', name: 'Calçados', shapes: ['mocassim'], icon: ['mocassim', '#141416'] }
+  ];
+  const FILTER_NAME = { todos: 'Todos', promo: 'Sale', favoritos: 'Favoritos', ...CAT_NAME };
+
   // ---------- Utilidades ----------
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const brl = n => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   const byId = id => PRODUCTS.find(p => p.id === id);
+  const off = p => p.old ? Math.round((1 - p.price / p.old) * 100) : 0;
   const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 
   const store = {
@@ -187,32 +205,79 @@
   }
 
   // ---------- Grade de produtos ----------
-  const state = { filter: 'todos', sort: 'destaque' };
+  const state = { filter: 'todos', sort: 'destaque', q: '' };
+  let favs = store.get('dg-favs', []).filter(byId);
+
+  const norm = t => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+  function matches(p) {
+    const f = state.filter;
+    if (f === 'promo' && !p.old) return false;
+    if (f === 'favoritos' && !favs.includes(p.id)) return false;
+    if (f.startsWith('type:') && !TYPES.find(t => t.key === f.slice(5)).shapes.includes(p.shape)) return false;
+    if (CAT_NAME[f] && p.cat !== f) return false;
+    if (state.q) {
+      const hay = norm(`${p.name} ${p.desc} ${CAT_NAME[p.cat]} ${p.colors.map(c => c[0]).join(' ')}`);
+      if (!norm(state.q).split(/\s+/).every(w => hay.includes(w))) return false;
+    }
+    return true;
+  }
+
+  function cardHTML(p, i = 0) {
+    const fav = favs.includes(p.id);
+    return `
+      <article class="card" data-id="${p.id}" tabindex="0" style="animation-delay:${i * 40}ms" aria-label="${esc(p.name)}, ${brl(p.price)}">
+        <div class="card-art" style="background:${p.bg}">
+          <div class="tags">
+            ${p.old ? `<span class="card-tag sale">−${off(p)}%</span>` : ''}
+            ${p.tag ? `<span class="card-tag">${esc(p.tag)}</span>` : ''}
+          </div>
+          <button class="fav${fav ? ' on' : ''}" data-fav="${p.id}" aria-pressed="${fav}" aria-label="Favoritar ${esc(p.name)}">
+            <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+          </button>
+          ${svg(p.shape, p.colors[0][1])}
+          <button class="quick" data-id="${p.id}" tabindex="-1">Compra rápida</button>
+        </div>
+        <h3>${esc(p.name)}</h3>
+        <div class="meta">
+          <span class="price">${p.old ? `<s>${brl(p.old)}</s>` : ''}${brl(p.price)}</span>
+          <span class="dots">${p.colors.map(c => `<i style="background:${c[1]}" title="${esc(c[0])}"></i>`).join('')}</span>
+        </div>
+        <span class="sub">${brl(p.price * (1 - PIX))} no Pix · ${PARCELAS}x de ${brl(p.price / PARCELAS)}</span>
+      </article>`;
+  }
 
   function renderGrid() {
-    let list = PRODUCTS.filter(p => state.filter === 'todos' || p.cat === state.filter);
     const sorters = {
       destaque: (a, b) => a.rank - b.rank,
       menor: (a, b) => a.price - b.price,
       maior: (a, b) => b.price - a.price,
       nome: (a, b) => a.name.localeCompare(b.name, 'pt-BR')
     };
-    list = list.slice().sort(sorters[state.sort]);
+    const list = PRODUCTS.filter(matches).sort(sorters[state.sort]);
+    const type = state.filter.startsWith('type:') && TYPES.find(t => t.key === state.filter.slice(5));
+    const label = type ? type.name : FILTER_NAME[state.filter];
+    $('#resultInfo').innerHTML = [
+      state.q ? `Busca por “${esc(state.q)}”` : '',
+      state.filter !== 'todos' ? esc(label) : '',
+      `${list.length} ${list.length === 1 ? 'peça' : 'peças'}`
+    ].filter(Boolean).join(' · ') + (state.q || state.filter !== 'todos' ? ' <button class="clear" data-clear>Limpar</button>' : '');
 
-    $('#grid').innerHTML = list.map((p, i) => `
-      <article class="card" data-id="${p.id}" tabindex="0" style="animation-delay:${i * 40}ms" aria-label="${esc(p.name)}, ${brl(p.price)}">
-        <div class="card-art" style="background:${p.bg}">
-          ${p.tag ? `<span class="card-tag">${esc(p.tag)}</span>` : ''}
-          ${svg(p.shape, p.colors[0][1])}
-          <button class="quick" data-id="${p.id}" tabindex="-1">Compra rápida</button>
-        </div>
-        <h3>${esc(p.name)}</h3>
-        <div class="meta">
-          <span class="price">${brl(p.price)}</span>
-          <span class="dots">${p.colors.map(c => `<i style="background:${c[1]}" title="${esc(c[0])}"></i>`).join('')}</span>
-        </div>
-        <span class="sub">${PARCELAS}x de ${brl(p.price / PARCELAS)}</span>
-      </article>`).join('');
+    $('#grid').innerHTML = list.length
+      ? list.map(cardHTML).join('')
+      : `<p class="empty">${state.filter === 'favoritos' ? 'Você ainda não favoritou nenhuma peça. Toque no coração para salvar.' : 'Nenhuma peça encontrada.'}</p>`;
+  }
+
+  function renderRail() {
+    $('#rail').innerHTML = PRODUCTS.slice().sort((a, b) => a.rank - b.rank).slice(0, 8).map(cardHTML).join('');
+  }
+
+  function renderRounds() {
+    $('#rounds').innerHTML = TYPES.map(t => `
+      <a href="#colecao" class="round" data-filter="type:${t.key}">
+        <span class="round-art">${svg(t.icon[0], t.icon[1])}</span>
+        <span>${t.name}</span>
+      </a>`).join('');
   }
 
   function setFilter(f) {
@@ -222,7 +287,68 @@
       c.classList.toggle('active', on);
       c.setAttribute('aria-selected', on);
     });
+    $$('.round').forEach(r => r.classList.toggle('active', r.dataset.filter === f));
     renderGrid();
+  }
+
+  function toggleFav(id) {
+    favs = favs.includes(id) ? favs.filter(f => f !== id) : [...favs, id];
+    store.set('dg-favs', favs);
+    $$('.fav-count').forEach(el => { el.textContent = favs.length; });
+    $$(`[data-fav="${id}"]`).forEach(b => {
+      const on = favs.includes(id);
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', on);
+    });
+    toast(favs.includes(id) ? 'Salvo nos favoritos' : 'Removido dos favoritos');
+    if (state.filter === 'favoritos') renderGrid();
+  }
+
+  // ---------- Banner rotativo ----------
+  function initSlider() {
+    const slides = $$('.slide');
+    let cur = 0, timer;
+    slides.forEach(sl => { $('.slide-art', sl).innerHTML = svg(sl.dataset.shape, sl.dataset.color); });
+    $('#slideDots').innerHTML = slides.map((_, i) => `<button aria-label="Banner ${i + 1}"></button>`).join('');
+    const dots = $$('#slideDots button');
+    const go = i => {
+      cur = (i + slides.length) % slides.length;
+      slides.forEach((sl, k) => { sl.classList.toggle('on', k === cur); sl.setAttribute('aria-hidden', k !== cur); });
+      dots.forEach((d, k) => d.classList.toggle('on', k === cur));
+      clearInterval(timer);
+      timer = setInterval(() => go(cur + 1), 6000);
+    };
+    $('.slide-nav.prev').addEventListener('click', () => go(cur - 1));
+    $('.slide-nav.next').addEventListener('click', () => go(cur + 1));
+    dots.forEach((d, k) => d.addEventListener('click', () => go(k)));
+    let x0 = null;
+    const box = $('.slider');
+    box.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+    box.addEventListener('touchend', e => {
+      if (x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 40) go(cur + (dx < 0 ? 1 : -1));
+      x0 = null;
+    });
+    go(0);
+  }
+
+  function initAnnounce() {
+    const items = $$('.ann');
+    let i = 0;
+    setInterval(() => {
+      items[i].classList.remove('on');
+      i = (i + 1) % items.length;
+      items[i].classList.add('on');
+    }, 3500);
+  }
+
+  // ---------- Busca ----------
+  function toggleSearch(show) {
+    const bar = $('#searchbar');
+    bar.hidden = !show;
+    if (show) $('#q').focus();
+    else if (state.q) { state.q = ''; $('#q').value = ''; renderGrid(); }
   }
 
   // ---------- Painéis (menu, sacola, modais) ----------
@@ -260,7 +386,7 @@
 
     $('#pmCat').textContent = CAT_NAME[p.cat];
     $('#pmName').textContent = p.name;
-    $('#pmPrice').innerHTML = `${brl(p.price)}<small>ou ${PARCELAS}x de ${brl(p.price / PARCELAS)} sem juros · 5% off no Pix</small>`;
+    $('#pmPrice').innerHTML = `${p.old ? `<s>${brl(p.old)}</s> ` : ''}${brl(p.price)}${p.old ? ` <span class="pm-off">−${off(p)}%</span>` : ''}<small>${brl(p.price * (1 - PIX))} no Pix · ou ${PARCELAS}x de ${brl(p.price / PARCELAS)} sem juros</small>`;
     $('#pmDesc').textContent = p.desc;
     $('#pmCare').textContent = p.care;
     $('#pmErr').textContent = '';
@@ -303,9 +429,15 @@
     saveCart();
   }
 
-  function renderCart() {
+  function totals() {
     const count = cart.reduce((n, i) => n + i.qty, 0);
     const subtotal = cart.reduce((n, i) => n + byId(i.id).price * i.qty, 0);
+    const discount = count >= KIT_QTD ? subtotal * KIT_DESC : 0;
+    return { count, subtotal, discount, total: subtotal - discount };
+  }
+
+  function renderCart() {
+    const { count, subtotal, discount, total } = totals();
     $$('.cart-count').forEach(el => { el.textContent = count; });
 
     const list = $('#cartItems');
@@ -333,12 +465,20 @@
     }
 
     $('#subtotal').textContent = brl(subtotal);
-    $('#installment').textContent = brl(subtotal / PARCELAS);
-    const left = FRETE_GRATIS - subtotal;
+    $('#discRow').hidden = !discount;
+    $('#discount').textContent = `− ${brl(discount)}`;
+    $('#total').textContent = brl(total);
+    $('#installment').textContent = brl(total / PARCELAS);
+    $('#pixTotal').textContent = brl(total * (1 - PIX));
+    const missing = KIT_QTD - count;
+    $('#kitHint').textContent = !count ? '' : missing > 0
+      ? `Adicione mais ${missing} ${missing === 1 ? 'peça' : 'peças'} e ganhe ${KIT_DESC * 100}% off no kit.`
+      : `Desconto de kit aplicado: ${KIT_DESC * 100}% off.`;
+    const left = FRETE_GRATIS - total;
     $('#shipText').innerHTML = left > 0
       ? `Faltam <b>${brl(left)}</b> para o frete grátis`
       : 'Você ganhou <b>frete grátis</b>.';
-    $('#shipFill').style.width = `${Math.min(100, (subtotal / FRETE_GRATIS) * 100)}%`;
+    $('#shipFill').style.width = `${Math.min(100, (total / FRETE_GRATIS) * 100)}%`;
     $('#checkout').disabled = !cart.length;
     $('#checkout').style.opacity = cart.length ? 1 : .4;
   }
@@ -354,8 +494,11 @@
       const p = byId(i.id);
       return `• ${i.qty}x ${p.name} (${p.colors[i.color][0]}, ${i.size}) — ${brl(p.price * i.qty)}`;
     });
-    const subtotal = cart.reduce((n, i) => n + byId(i.id).price * i.qty, 0);
-    const text = `Olá, DG Club! Gostaria de finalizar meu pedido:\n\n${lines.join('\n')}\n\nSubtotal: ${brl(subtotal)}`;
+    const { subtotal, discount, total } = totals();
+    const text = `Olá, DG Club! Gostaria de finalizar meu pedido:\n\n${lines.join('\n')}\n\n` +
+      `Subtotal: ${brl(subtotal)}\n` +
+      (discount ? `Kit ${KIT_QTD} peças (−${KIT_DESC * 100}%): − ${brl(discount)}\n` : '') +
+      `Total: ${brl(total)} (ou ${brl(total * (1 - PIX))} no Pix)`;
     window.open(waUrl(text), '_blank', 'noopener');
   }
 
@@ -378,11 +521,22 @@
   document.addEventListener('click', e => {
     const t = e.target;
 
+    const favBtn = t.closest('[data-fav]');
+    if (favBtn) { e.stopPropagation(); toggleFav(favBtn.dataset.fav); return; }
+
+    if (t.closest('[data-search]')) { toggleSearch($('#searchbar').hidden); return; }
+    if (t.closest('[data-search-close]')) { toggleSearch(false); return; }
+    if (t.closest('[data-clear]')) { state.q = ''; $('#q').value = ''; setFilter('todos'); return; }
+
+    const railBtn = t.closest('[data-rail]');
+    if (railBtn) { const r = $('#rail'); r.scrollBy({ left: +railBtn.dataset.rail * r.clientWidth * .8, behavior: 'smooth' }); return; }
+
     const filterLink = t.closest('[data-filter]');
     if (filterLink) {
       setFilter(filterLink.dataset.filter);
       if (filterLink.closest('#menu')) closeAll(false);
       if (filterLink.classList.contains('chip')) return;
+      if (filterLink.tagName === 'BUTTON') { $('#colecao').scrollIntoView({ behavior: 'smooth' }); return; }
     }
 
     const opener = t.closest('[data-open]');
@@ -444,6 +598,19 @@
     }
   });
 
+  let qTimer;
+  $('#q').addEventListener('input', e => {
+    clearTimeout(qTimer);
+    qTimer = setTimeout(() => {
+      state.q = e.target.value.trim();
+      renderGrid();
+    }, 150);
+  });
+  $('#searchbar').addEventListener('submit', e => {
+    e.preventDefault();
+    $('#colecao').scrollIntoView({ behavior: 'smooth' });
+  });
+
   $('#sort').addEventListener('change', e => { state.sort = e.target.value; renderGrid(); });
 
   $('#nlForm').addEventListener('submit', e => {
@@ -459,6 +626,11 @@
   $$('.wa-link').forEach(a => { a.href = waUrl('Olá, DG Club! Vim pelo site.'); });
   $('#year').textContent = new Date().getFullYear();
 
+  $$('.fav-count').forEach(el => { el.textContent = favs.length; });
+  renderRounds();
+  renderRail();
   renderGrid();
   renderCart();
+  initSlider();
+  initAnnounce();
 })();
