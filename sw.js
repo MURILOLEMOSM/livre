@@ -89,6 +89,9 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(request.url);
 
+  // A loja (/loja/) é um site à parte: não passa pelo cache do app
+  if (url.origin === self.location.origin && url.pathname.startsWith('/loja/')) return;
+
   // Navegação (abrir o app): tenta a rede, cai para o index em cache offline
   if (request.mode === 'navigate') {
     event.respondWith(

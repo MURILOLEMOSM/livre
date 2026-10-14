@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DG Club · Est. 2024</title>
+  <meta name="description" content="DG Club — peças atemporais, tecidos nobres e corte preciso. Vestuário masculino e feminino com estética old money.">
+  <meta name="theme-color" content="#f4f0e8">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231c1b19'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='15' fill='%23f4f0e8' text-anchor='middle'%3EDG%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="announce">
+    <p>Frete grátis acima de R$ 599 &nbsp;·&nbsp; Troca em até 30 dias &nbsp;·&nbsp; Até 6x sem juros</p>
+  </div>
+
+  <header class="header" id="top">
+    <button class="icon-btn menu-btn" aria-label="Abrir menu" data-open="menu">
+      <svg viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
+    </button>
+
+    <nav class="nav nav-left" aria-label="Principal">
+      <a href="#colecao" data-filter="masculino">Masculino</a>
+      <a href="#colecao" data-filter="feminino">Feminino</a>
+      <a href="#colecao" data-filter="acessorios">Acessórios</a>
+    </nav>
+
+    <a href="#top" class="wordmark" aria-label="DG Club, início">
+      <span class="wm-main">DG&nbsp;CLUB</span>
+      <span class="wm-sub">Est. MMXXIV</span>
+    </a>
+
+    <nav class="nav nav-right" aria-label="Conta">
+      <a href="#clube">O Clube</a>
+      <a href="#atelier">Atelier</a>
+      <button class="cart-link" data-open="cart">Sacola (<span class="cart-count">0</span>)</button>
+    </nav>
+
+    <button class="icon-btn bag-btn" aria-label="Abrir sacola" data-open="cart">
+      <svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+      <span class="badge cart-count">0</span>
+    </button>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-art" aria-hidden="true">
+        <div class="hero-panel p1"><span>Linho</span></div>
+        <div class="hero-panel p2"><span>Cashmere</span></div>
+        <div class="hero-panel p3"><span>Algodão Pima</span></div>
+      </div>
+      <div class="hero-copy">
+        <p class="eyebrow">Coleção Outono · Inverno</p>
+        <h1>Vestir-se bem<br><em>nunca sai de moda.</em></h1>
+        <p class="lede">Peças pensadas para durar décadas, não temporadas. Tecidos nobres, cortes limpos e nenhum logotipo gritando.</p>
+        <div class="hero-actions">
+          <a href="#colecao" class="btn btn-dark">Ver coleção</a>
+          <a href="#clube" class="btn btn-ghost">Conheça o clube</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- VALUES STRIP -->
+    <section class="values" aria-label="Diferenciais">
+      <div><strong>Tecidos nobres</strong><span>Linho italiano, lã merino, cashmere</span></div>
+      <div><strong>Corte preciso</strong><span>Modelagem ajustada à mão</span></div>
+      <div><strong>Feito para durar</strong><span>Costuras reforçadas e acabamento fino</span></div>
+      <div><strong>Atendimento pessoal</strong><span>Consultoria de tamanho pelo WhatsApp</span></div>
+    </section>
+
+    <!-- CATEGORIES -->
+    <section class="cats">
+      <a href="#colecao" class="cat" data-filter="masculino">
+        <div class="cat-art tone-navy"></div>
+        <div class="cat-label"><span>Masculino</span><small>Camisas, polos, alfaiataria</small></div>
+      </a>
+      <a href="#colecao" class="cat" data-filter="feminino">
+        <div class="cat-art tone-sand"></div>
+        <div class="cat-label"><span>Feminino</span><small>Malharia, vestidos, linho</small></div>
+      </a>
+      <a href="#colecao" class="cat" data-filter="acessorios">
+        <div class="cat-art tone-green"></div>
+        <div class="cat-label"><span>Acessórios</span><small>Bonés, cintos, mocassins</small></div>
+      </a>
+    </section>
+
+    <!-- COLLECTION -->
+    <section class="collection" id="colecao">
+      <div class="section-head">
+        <p class="eyebrow">A coleção</p>
+        <h2>Essenciais atemporais</h2>
+      </div>
+
+      <div class="toolbar">
+        <div class="filters" role="tablist" aria-label="Filtrar por categoria">
+          <button class="chip active" data-filter="todos" role="tab" aria-selected="true">Todos</button>
+          <button class="chip" data-filter="masculino" role="tab" aria-selected="false">Masculino</button>
+          <button class="chip" data-filter="feminino" role="tab" aria-selected="false">Feminino</button>
+          <button class="chip" data-filter="acessorios" role="tab" aria-selected="false">Acessórios</button>
+        </div>
+        <label class="sort">
+          <span>Ordenar</span>
+          <select id="sort">
+            <option value="destaque">Destaques</option>
+            <option value="menor">Menor preço</option>
+            <option value="maior">Maior preço</option>
+            <option value="nome">A–Z</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <!-- EDITORIAL / CLUB -->
+    <section class="editorial" id="clube">
+      <div class="editorial-art tone-camel" aria-hidden="true">
+        <span class="monogram">DG</span>
+      </div>
+      <div class="editorial-copy">
+        <p class="eyebrow">O Clube</p>
+        <h2>Discreto é o novo<br><em>sofisticado.</em></h2>
+        <p>O DG Club nasceu da ideia de que elegância é silenciosa. Nossas peças conversam com quem entende de tecido, de caimento e de detalhe — sem precisar de logo estampado no peito.</p>
+        <p>Membros do clube recebem acesso antecipado aos drops, convites para eventos e um atendimento de alfaiataria personalizado.</p>
+        <a href="#newsletter" class="link-arrow">Fazer parte do clube →</a>
+      </div>
+    </section>
+
+    <!-- ATELIER -->
+    <section class="atelier" id="atelier">
+      <div class="section-head">
+        <p class="eyebrow">Atelier</p>
+        <h2>Como trabalhamos</h2>
+      </div>
+      <div class="steps">
+        <article>
+          <span class="num">I</span>
+          <h3>Seleção de matéria-prima</h3>
+          <p>Fios e tecidos escolhidos pelo toque, gramatura e durabilidade. Nada de poliéster disfarçado.</p>
+        </article>
+        <article>
+          <span class="num">II</span>
+          <h3>Modelagem própria</h3>
+          <p>Cada peça passa por provas até o caimento ficar exato — ombro no lugar, comprimento na medida.</p>
+        </article>
+        <article>
+          <span class="num">III</span>
+          <h3>Tiragem limitada</h3>
+          <p>Produzimos pouco, com cuidado. Quando acaba, acaba — e volta só se valer a pena.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="newsletter" id="newsletter">
+      <p class="eyebrow light">Lista privada</p>
+      <h2>Entre para o clube</h2>
+      <p>Drops antecipados, convites e nada de spam.</p>
+      <form class="nl-form" id="nlForm">
+        <label class="sr-only" for="nlEmail">Seu e-mail</label>
+        <input id="nlEmail" type="email" placeholder="seu@email.com" required>
+        <button class="btn btn-light" type="submit">Inscrever</button>
+      </form>
+      <p class="nl-msg" id="nlMsg" role="status"></p>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <span class="wm-main">DG&nbsp;CLUB</span>
+        <p>Vestuário atemporal para quem prefere qualidade a quantidade.</p>
+      </div>
+      <div>
+        <h4>Loja</h4>
+        <a href="#colecao" data-filter="masculino">Masculino</a>
+        <a href="#colecao" data-filter="feminino">Feminino</a>
+        <a href="#colecao" data-filter="acessorios">Acessórios</a>
+      </div>
+      <div>
+        <h4>Ajuda</h4>
+        <a href="#" data-open="info" data-info="tamanhos">Guia de tamanhos</a>
+        <a href="#" data-open="info" data-info="trocas">Trocas e devoluções</a>
+        <a href="#" data-open="info" data-info="envio">Envio</a>
+      </div>
+      <div>
+        <h4>Contato</h4>
+        <a href="https://instagram.com/dgclubstore" target="_blank" rel="noopener">Instagram · @dgclubstore</a>
+        <a href="#" class="wa-link" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> DG Club. Todos os direitos reservados.</span>
+      <span>Pix · Cartão em até 6x · Boleto</span>
+    </div>
+  </footer>
+
+  <!-- Mobile menu -->
+  <aside class="drawer drawer-left" id="menu" aria-hidden="true" aria-label="Menu">
+    <div class="drawer-head">
+      <span class="wm-main small">DG&nbsp;CLUB</span>
+      <button class="icon-btn" data-close aria-label="Fechar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <nav class="drawer-nav">
+      <a href="#colecao" data-filter="todos">Coleção</a>
+      <a href="#colecao" data-filter="masculino">Masculino</a>
+      <a href="#colecao" data-filter="feminino">Feminino</a>
+      <a href="#colecao" data-filter="acessorios">Acessórios</a>
+      <a href="#clube">O Clube</a>
+      <a href="#atelier">Atelier</a>
+      <a href="https://instagram.com/dgclubstore" target="_blank" rel="noopener">Instagram</a>
+    </nav>
+  </aside>
+
+  <!-- Cart -->
+  <aside class="drawer drawer-right" id="cart" aria-hidden="true" aria-label="Sacola">
+    <div class="drawer-head">
+      <h3>Sacola</h3>
+      <button class="icon-btn" data-close aria-label="Fechar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="ship-bar"><p id="shipText"></p><div class="ship-track"><div class="ship-fill" id="shipFill"></div></div></div>
+    <ul class="cart-items" id="cartItems"></ul>
+    <div class="cart-foot">
+      <div class="row"><span>Subtotal</span><strong id="subtotal">R$ 0,00</strong></div>
+      <p class="muted">ou em até 6x de <span id="installment">R$ 0,00</span> sem juros</p>
+      <button class="btn btn-dark full" id="checkout">Finalizar pelo WhatsApp</button>
+      <button class="btn btn-ghost full" data-close>Continuar comprando</button>
+    </div>
+  </aside>
+
+  <!-- Product modal -->
+  <div class="modal" id="product" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pmName">
+    <div class="modal-card">
+      <button class="icon-btn modal-x" data-close aria-label="Fechar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div class="pm-art" id="pmArt"></div>
+      <div class="pm-info">
+        <p class="eyebrow" id="pmCat"></p>
+        <h3 id="pmName"></h3>
+        <p class="pm-price" id="pmPrice"></p>
+        <p class="pm-desc" id="pmDesc"></p>
+        <div class="pm-block">
+          <span class="label">Cor: <b id="pmColorName"></b></span>
+          <div class="swatches" id="pmColors"></div>
+        </div>
+        <div class="pm-block">
+          <span class="label">Tamanho</span>
+          <div class="sizes" id="pmSizes"></div>
+        </div>
+        <button class="btn btn-dark full" id="pmAdd">Adicionar à sacola</button>
+        <p class="pm-err" id="pmErr" role="alert"></p>
+        <details>
+          <summary>Composição e cuidados</summary>
+          <p id="pmCare"></p>
+        </details>
+        <details>
+          <summary>Envio e trocas</summary>
+          <p>Envio em até 2 dias úteis. Primeira troca grátis em até 30 dias, com etiqueta.</p>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info modal -->
+  <div class="modal" id="info" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-card small">
+      <button class="icon-btn modal-x" data-close aria-label="Fechar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div class="info-body" id="infoBody"></div>
+    </div>
+  </div>
+
+  <div class="scrim" id="scrim"></div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
