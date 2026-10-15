@@ -1,6 +1,8 @@
-// Casa: radar de apps de exercícios domiciliares + montador de ficha para mandar ao paciente
+// Casa: programas de exercícios domiciliares (fisio monta → paciente recebe link →
+// relatório volta) + radar de apps de prescrição
 
-import { $, esc, uid, toast, store, openSheet, closeSheet, shareText, copyText } from './util.js';
+import { $, $$, esc, uid, toast, store, openSheet, closeSheet, shareText, copyText } from './util.js';
+import { EXERCICIOS, MODELOS, DIAS, byId, encodeData, decodeData, appBase, programPayload, adherence } from './exercicios.js';
 
 // Conferido em out/2026. Preços e recursos mudam: o app mostra a data e o link oficial.
 const RADAR = [
@@ -24,33 +26,12 @@ const RADAR = [
     d: 'Gestão de clínica com emissão de nota fiscal de serviço (NFS-e).' },
 ];
 
-// Biblioteca básica de exercícios para montar a ficha (o fisio ajusta a dose)
-const EXERCICIOS = [
-  { r: 'Joelho', n: 'Isometria de quadríceps', d: 'Deitado, joelho esticado com uma toalha enrolada embaixo. Aperte o joelho contra a toalha, segure e solte.', dose: '10 × 10 s' },
-  { r: 'Joelho', n: 'Deslizamento do calcanhar', d: 'Deitado, dobre o joelho arrastando o calcanhar na cama e volte devagar.', dose: '3 × 10' },
-  { r: 'Joelho', n: 'Elevação da perna estendida', d: 'Deitado, uma perna dobrada. Com o joelho da outra bem esticado, suba até a altura do outro joelho e desça devagar.', dose: '3 × 10' },
-  { r: 'Joelho', n: 'Sentar e levantar da cadeira', d: 'Pés na largura do quadril, levante sem usar as mãos (se conseguir) e sente devagar.', dose: '3 × 10' },
-  { r: 'Joelho', n: 'Mini agachamento na parede', d: 'Costas na parede, desça até onde for confortável (sem passar de 60°) e suba.', dose: '3 × 12' },
-  { r: 'Tornozelo', n: 'Bomba de tornozelo', d: 'Mexa os pés para cima e para baixo, ritmado. Ajuda a circulação.', dose: '20 × a cada hora' },
-  { r: 'Tornozelo', n: 'Elevação dos calcanhares', d: 'Em pé, apoiado na pia ou parede, suba na ponta dos pés e desça devagar.', dose: '3 × 15' },
-  { r: 'Quadril', n: 'Ponte', d: 'Deitado, joelhos dobrados. Suba o quadril até alinhar com o tronco, segure 2 s e desça.', dose: '3 × 12' },
-  { r: 'Quadril', n: 'Abdução deitado de lado', d: 'Deitado de lado, perna de cima esticada. Suba a perna sem rodar o quadril e desça devagar.', dose: '3 × 12' },
-  { r: 'Quadril', n: 'Concha (clamshell)', d: 'Deitado de lado, joelhos dobrados e pés juntos. Abra o joelho de cima sem girar o tronco.', dose: '3 × 15' },
-  { r: 'Coluna', n: 'Gato e camelo', d: 'Em quatro apoios, arredonde as costas olhando para o umbigo e depois afunde levemente olhando para frente.', dose: '2 × 10' },
-  { r: 'Coluna', n: 'Perdigueiro (bird-dog)', d: 'Em quatro apoios, estique braço e perna opostos sem deixar o quadril rodar. Alterne.', dose: '3 × 8 cada lado' },
-  { r: 'Coluna', n: 'Prancha', d: 'Apoiado nos antebraços e pontas dos pés (ou joelhos), corpo alinhado, respirando normalmente.', dose: '3 × 20–30 s' },
-  { r: 'Coluna', n: 'Joelhos ao peito', d: 'Deitado, abrace os joelhos e traga em direção ao peito com calma.', dose: '3 × 30 s' },
-  { r: 'Ombro', n: 'Pendular (Codman)', d: 'Inclinado à frente, apoiado na mesa, deixe o braço solto e faça pequenos círculos.', dose: '1 min cada sentido' },
-  { r: 'Ombro', n: 'Rotação externa com elástico', d: 'Cotovelo colado ao corpo a 90°, gire o antebraço para fora contra o elástico e volte devagar.', dose: '3 × 12' },
-  { r: 'Ombro', n: 'Deslizamento na parede', d: 'De frente para a parede, deslize as mãos para cima até onde for confortável e desça.', dose: '2 × 10' },
-  { r: 'Ombro', n: 'Retração das escápulas', d: 'Sentado com a coluna ereta, aproxime as escápulas, segure 3 s e solte.', dose: '3 × 10' },
-  { r: 'Cervical', n: 'Retração do queixo', d: 'Olhando para frente, leve o queixo para trás como se fizesse "papada", segure 3 s.', dose: '10 ×' },
-  { r: 'Equilíbrio', n: 'Apoio em uma perna', d: 'Perto de um apoio seguro, fique em uma perna só. Progrida para olhos fechados só com orientação.', dose: '3 × 30 s cada' },
-  { r: 'Respiratório', n: 'Respiração diafragmática', d: 'Mão na barriga, puxe o ar pelo nariz enchendo a barriga e solte devagar pela boca com lábios franzidos.', dose: '10 respirações, 3× ao dia' },
-  { r: 'Mobilidade', n: 'Alongamento de isquiotibiais', d: 'Sentado na beira da cadeira, perna esticada com o calcanhar no chão, incline o tronco à frente com a coluna reta.', dose: '3 × 30 s' },
-];
-
 let radarFilter = 'todos';
+
+const freqText = s => {
+  const dias = s.dias?.length && s.dias.length < 7 ? s.dias.map(d => DIAS[d]).join(', ') : 'todos os dias';
+  return `${s.vezes || 1}× ao dia, ${dias}`;
+};
 
 export function renderCasa(root) {
   const sheets = store.get('fichas', []);
@@ -61,21 +42,40 @@ export function renderCasa(root) {
 
   root.innerHTML = `
     <h1>Exercícios em casa</h1>
-    <p class="muted">Monte a ficha do paciente aqui mesmo e mande pelo WhatsApp, ou compare os apps que fisioterapeutas usam para prescrever.</p>
+    <p class="muted">Monte o programa, mande o link pelo WhatsApp e acompanhe: o paciente marca o que fez, registra a dor e o relatório volta para você. Grátis e sem cadastro.</p>
 
-    <div class="row between"><h2 style="margin:0">Fichas de exercícios</h2><button type="button" id="newSheet">＋ Nova ficha</button></div>
+    <div class="card" style="font-size:.9rem">
+      <b>Como funciona</b>
+      <ol style="margin-bottom:0">
+        <li>Você monta o programa (do zero, da biblioteca ou de um modelo).</li>
+        <li>O paciente abre o link: vê os exercícios, marca as séries, usa o cronômetro e diz quanto doeu.</li>
+        <li>Ele toca em "Enviar relatório" e você abre o link aqui para ver adesão e evolução da dor.</li>
+      </ol>
+    </div>
+
+    <div class="row between"><h2 style="margin:0">Programas</h2><button type="button" id="newSheet">＋ Novo programa</button></div>
     <div style="margin-top:10px">
-      ${sheets.length ? sheets.map(s => `
-        <div class="card row between">
-          <div><b>${esc(s.paciente || 'Sem nome')}</b><br><small class="muted">${s.itens.length} exercícios · ${esc(s.data)}</small></div>
-          <div class="row">
-            <button type="button" class="small" data-share="${s.id}">Enviar</button>
+      ${sheets.length ? sheets.map(s => {
+        const logs = s.relatorios || [];
+        const last = logs.at(-1);
+        return `
+        <div class="card">
+          <div class="row between">
+            <div><b>${esc(s.paciente || 'Sem nome')}</b><br><small class="muted">${s.itens.length} exercícios · ${esc(s.freq || '')} · criado em ${esc(s.data)}</small></div>
+            ${logs.length ? `<span class="tag ${adherence(logs, s.dias, s.vezes) >= 80 ? 'ok' : adherence(logs, s.dias, s.vezes) >= 50 ? 'warn' : 'bad'}">${adherence(logs, s.dias, s.vezes)}% adesão (7 dias)</span>` : '<span class="tag">Sem relatório ainda</span>'}
+          </div>
+          ${last ? `<p class="muted" style="font-size:.84rem;margin:.4rem 0 0">Última sessão ${new Date(last.t).toLocaleDateString('pt-BR')} · dor ${last.dor}/10${last.o ? ' · “' + esc(last.o) + '”' : ''}</p>` : ''}
+          <div class="row" style="margin-top:10px">
+            <button type="button" class="small" data-send="${s.id}">Enviar ao paciente</button>
+            ${logs.length ? `<button type="button" class="soft small" data-evo="${s.id}">Evolução</button>` : ''}
             <button type="button" class="ghost small" data-edit="${s.id}">Editar</button>
           </div>
-        </div>`).join('') : `<div class="card empty"><div class="big">🏋️</div><p>Nenhuma ficha ainda. Monte com exercícios prontos ou escreva os seus.</p></div>`}
+        </div>`;
+      }).join('') : `<div class="card empty"><div class="big">🏋️</div><p>Nenhum programa ainda. Comece com um modelo pronto e ajuste para o seu paciente.</p></div>`}
     </div>
 
     <h2>Radar de apps</h2>
+    <p class="muted" style="margin-top:-4px">Para comparar com outras opções do mercado.</p>
     <div class="chips" id="radarChips">
       ${[['todos', 'Todos'], ['Prescrição', 'Prescrição de exercícios'], ['Gestão (Brasil)', 'Gestão de clínica (BR)'], ['pt', 'Em português']].map(([k, l]) => `<button type="button" class="chip ${radarFilter === k ? 'on' : ''}" data-rf="${esc(k)}">${l}</button>`).join('')}
     </div>
@@ -86,10 +86,10 @@ export function renderCasa(root) {
           <div class="meta">${esc(a.tipo)} · ${esc(a.plat || '')} · ${esc(a.para || '')}</div>
           <p>${esc(a.d || '')}</p>
           <p style="font-size:.85rem"><b>Preço:</b> ${esc(a.preco || '—')}</p>
-          <label for="note-${esc(a.n)}" style="font-size:.78rem">Minha avaliação</label>
-          <select id="note-${esc(a.n)}" data-note="${esc(a.n)}">
+          <label style="font-size:.78rem">Minha avaliação
+          <select data-note="${esc(a.n)}" style="margin-top:4px">
             ${['', 'Quero testar', 'Testando', 'Uso e recomendo', 'Não gostei'].map(o => `<option value="${o}" ${(notes[a.n] || '') === o ? 'selected' : ''}>${o || '— sem avaliação —'}</option>`).join('')}
-          </select>
+          </select></label>
           <div class="row" style="margin-top:8px">
             ${a.site ? `<a class="btn small soft" href="${esc(a.site)}" target="_blank" rel="noopener noreferrer">${a.busca ? 'Pesquisar ↗' : 'Abrir site ↗'}</a>` : ''}
             ${a.meu ? `<button type="button" class="ghost small" data-rm-app="${esc(a.id)}">Remover</button>` : ''}
@@ -97,75 +97,109 @@ export function renderCasa(root) {
         </div>`).join('')}
     </div>
     <div class="row" style="margin-top:4px"><button type="button" class="soft" id="addApp">＋ Adicionar app ao radar</button></div>
-    <p class="muted" style="font-size:.8rem">Informações conferidas em outubro de 2026 nos sites dos fornecedores e em comparativos; preços e recursos mudam, confira antes de assinar. Ao mandar vídeos ou dados de pacientes por qualquer app, siga a LGPD e as resoluções do COFFITO sobre teleatendimento.</p>
+    <p class="muted" style="font-size:.8rem">Informações conferidas em outubro de 2026 nos sites dos fornecedores e em comparativos; preços e recursos mudam, confira antes de assinar. Ao trocar dados de pacientes por qualquer app, siga a LGPD e as resoluções do COFFITO sobre teleatendimento.</p>
   `;
 
-  $('#newSheet').onclick = () => openSheetEditor(root);
-  root.querySelectorAll('[data-edit]').forEach(b => { b.onclick = () => openSheetEditor(root, sheets.find(s => s.id === b.dataset.edit)); });
-  root.querySelectorAll('[data-share]').forEach(b => {
-    b.onclick = () => {
-      const s = sheets.find(x => x.id === b.dataset.share);
-      shareText('Seus exercícios', sheetText(s));
-    };
-  });
+  const find = id => sheets.find(s => s.id === id);
+  $('#newSheet').onclick = () => openEditor(root);
+  $$('[data-edit]', root).forEach(b => { b.onclick = () => openEditor(root, find(b.dataset.edit)); });
+  $$('[data-send]', root).forEach(b => { b.onclick = () => sendProgram(find(b.dataset.send)); });
+  $$('[data-evo]', root).forEach(b => { b.onclick = () => openEvolution(find(b.dataset.evo)); });
   $('#radarChips').onclick = e => {
     const b = e.target.closest('[data-rf]');
     if (!b) return;
     radarFilter = b.dataset.rf;
     renderCasa(root);
   };
-  root.querySelectorAll('[data-note]').forEach(sel => {
+  $$('[data-note]', root).forEach(sel => {
     sel.onchange = () => { const n = store.get('radarNotas', {}); n[sel.dataset.note] = sel.value; store.set('radarNotas', n); toast('Anotado'); };
   });
-  root.querySelectorAll('[data-rm-app]').forEach(b => {
+  $$('[data-rm-app]', root).forEach(b => {
     b.onclick = () => { store.set('radarMeus', myApps.filter(a => a.id !== b.dataset.rmApp)); renderCasa(root); };
   });
   $('#addApp').onclick = () => openAddApp(root);
 }
 
-function sheetText(s) {
-  const lines = [
-    `*Exercícios para casa${s.paciente ? ' · ' + s.paciente : ''}*`,
-    s.freq ? `Frequência: ${s.freq}` : '',
-    '',
-    ...s.itens.map((it, i) => `*${i + 1}. ${it.n}* (${it.dose})\n${it.d}`),
-    '',
-    s.obs ? `Observações: ${s.obs}` : '',
-    'Dor durante o exercício: até 5 de 0 a 10 é aceitável se passar até o dia seguinte. Se piorar muito, pare e me avise.',
-    s.prof ? `\n${s.prof}` : '',
-  ];
-  return lines.filter((l, i, arr) => l !== '' || arr[i - 1] !== '').join('\n').trim();
+/* ---------------- Enviar ao paciente ---------------- */
+
+async function programLink(s) {
+  return appBase() + 'paciente.html#p=' + await encodeData(programPayload(s));
 }
 
-function openSheetEditor(root, existing) {
-  const s = existing ? JSON.parse(JSON.stringify(existing)) : { id: uid(), paciente: '', freq: '1× ao dia, 5 dias por semana', obs: '', prof: store.get('profAssinatura', ''), itens: [], data: new Date().toLocaleDateString('pt-BR') };
+async function sendProgram(s) {
+  const link = await programLink(s);
+  const text = `Olá${s.paciente ? ', ' + s.paciente : ''}! Aqui estão seus exercícios para casa:\n${link}\n\nAbra no celular, marque cada série que fizer e, no final, diga quanto doeu. Uma vez por semana, toque em "Enviar relatório" para eu acompanhar.`;
+  const tel = (s.telPac || '').replace(/\D/g, '');
+  if (tel) window.open(`https://wa.me/${tel.length <= 11 ? '55' + tel : tel}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+  else shareText('Seus exercícios', text);
+}
+
+// Versão em texto puro (para quem prefere mandar a ficha escrita ou imprimir)
+function sheetText(s) {
+  return [
+    `*Exercícios para casa${s.paciente ? ' · ' + s.paciente : ''}*`,
+    `Frequência: ${s.freq}`,
+    '',
+    ...s.itens.map((it, i) => `*${i + 1}. ${it.n}* (${it.dose})\n${it.d}${it.v ? '\nVídeo: ' + it.v : ''}`),
+    '',
+    s.obs ? `Observações: ${s.obs}\n` : '',
+    'Dor durante o exercício: até 5 de 0 a 10 é aceitável se passar até o dia seguinte. Se piorar muito, pare e me avise.',
+    s.prof ? `\n${s.prof}` : '',
+  ].join('\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+
+/* ---------------- Editor do programa ---------------- */
+
+function openEditor(root, existing) {
+  const s = existing ? JSON.parse(JSON.stringify(existing)) : {
+    id: uid(), paciente: '', telPac: '', dias: [1, 2, 3, 4, 5], vezes: 1, obs: '', itens: [], relatorios: [],
+    prof: store.get('profAssinatura', ''), tel: store.get('profTel', ''), data: new Date().toLocaleDateString('pt-BR'),
+  };
+  s.dias ??= [];
+  s.vezes ??= 1;
   const regions = [...new Set(EXERCICIOS.map(e => e.r))];
+  let region = '';
 
-  const body = openSheet(existing ? 'Editar ficha' : 'Nova ficha', `
-    <label for="shPac">Paciente (primeiro nome ou apelido)</label>
-    <input id="shPac" value="${esc(s.paciente)}" />
-    <label for="shFreq">Frequência</label>
-    <input id="shFreq" value="${esc(s.freq)}" />
+  const body = openSheet(existing ? 'Editar programa' : 'Novo programa', `
+    <div class="field2">
+      <div><label for="shPac">Paciente (primeiro nome)</label><input id="shPac" value="${esc(s.paciente)}" /></div>
+      <div><label for="shTelPac">WhatsApp do paciente</label><input id="shTelPac" type="tel" inputmode="tel" placeholder="DDD + número" value="${esc(s.telPac || '')}" /></div>
+    </div>
+    <label>Dias da semana</label>
+    <div class="dias">${DIAS.map((d, i) => `<label><input type="checkbox" data-dia="${i}" ${s.dias.includes(i) ? 'checked' : ''} /><span>${d}</span></label>`).join('')}</div>
+    <label for="shVezes">Vezes por dia</label>
+    <select id="shVezes">${[1, 2, 3].map(n => `<option ${s.vezes === n ? 'selected' : ''}>${n}</option>`).join('')}</select>
 
-    <h3 style="margin-top:14px">Exercícios na ficha</h3>
+    ${existing ? '' : `<label for="shModelo">Começar de um modelo (opcional)</label>
+    <select id="shModelo"><option value="">—</option>${MODELOS.map((m, i) => `<option value="${i}">${esc(m.n)}</option>`).join('')}</select>`}
+
+    <h3 style="margin-top:16px">Exercícios do programa</h3>
     <div id="shItems"></div>
 
-    <label for="shReg">Adicionar exercício pronto</label>
-    <div class="row" style="flex-wrap:nowrap">
-      <select id="shReg">${regions.map(r => `<optgroup label="${esc(r)}">${EXERCICIOS.map((e, i) => e.r === r ? `<option value="${i}">${esc(e.n)}</option>` : '').join('')}</optgroup>`).join('')}</select>
-      <button type="button" class="soft" id="shAdd">Adicionar</button>
-    </div>
-    <button type="button" class="ghost small" id="shCustom" style="margin-top:8px">＋ Escrever exercício próprio</button>
+    <label for="shBusca">Adicionar da biblioteca (${EXERCICIOS.length} exercícios)</label>
+    <input id="shBusca" type="search" placeholder="Buscar: ponte, ombro, equilíbrio..." />
+    <div class="chips" id="shReg" style="margin-top:6px"><button type="button" class="chip on" data-r="">Todos</button>${regions.map(r => `<button type="button" class="chip" data-r="${esc(r)}">${esc(r)}</button>`).join('')}</div>
+    <div class="lib-list" id="shLib"></div>
 
-    <label for="shObs">Observações</label>
+    <details class="acc" style="margin-top:10px"><summary>✏️ Escrever exercício próprio</summary><div class="acc-body">
+      <label for="cxN">Nome</label><input id="cxN" />
+      <label for="cxD">Como fazer (linguagem simples)</label><textarea id="cxD"></textarea>
+      <label for="cxDose">Dose</label><input id="cxDose" value="3 × 10" />
+      <button type="button" class="soft" id="cxAdd" style="margin-top:8px">Adicionar ao programa</button>
+    </div></details>
+
+    <label for="shObs">Recado para o paciente</label>
     <textarea id="shObs" placeholder="Ex.: usar gelo 15 min depois; parar se sentir formigamento.">${esc(s.obs)}</textarea>
-    <label for="shProf">Assinatura (seu nome e CREFITO)</label>
-    <input id="shProf" value="${esc(s.prof)}" placeholder="Ex.: Dra. Ana Lima · CREFITO-3 000000-F" />
+    <div class="field2">
+      <div><label for="shProf">Sua assinatura</label><input id="shProf" value="${esc(s.prof)}" placeholder="Dra. Ana · CREFITO-3 000000-F" /></div>
+      <div><label for="shTel">Seu WhatsApp (recebe relatórios)</label><input id="shTel" type="tel" inputmode="tel" value="${esc(s.tel || '')}" /></div>
+    </div>
 
     <div class="row" style="margin-top:14px">
-      <button type="button" id="shSave">Salvar</button>
-      <button type="button" class="soft" id="shSend">Salvar e enviar</button>
-      <button type="button" class="ghost" id="shCopy">Copiar texto</button>
+      <button type="button" id="shSend">Salvar e enviar link</button>
+      <button type="button" class="soft" id="shSave">Só salvar</button>
+      <button type="button" class="ghost" id="shCopy">Copiar como texto</button>
+      <button type="button" class="ghost" id="shPreview">Ver como paciente</button>
       ${existing ? '<button type="button" class="ghost" id="shDel" style="color:var(--bad);border-color:var(--bad)">Apagar</button>' : ''}
     </div>
   `);
@@ -173,40 +207,78 @@ function openSheetEditor(root, existing) {
   const drawItems = () => {
     $('#shItems', body).innerHTML = s.itens.length
       ? s.itens.map((it, i) => `<div class="ex-item">
-          <div><b>${esc(it.n)}</b><br><small class="muted">${esc(it.d)}</small>
-            <input data-dose="${i}" value="${esc(it.dose)}" aria-label="Dose" style="margin-top:6px;padding:6px 10px" /></div>
-          <button type="button" class="ghost small" data-rm="${i}" aria-label="Remover">✕</button>
+          <div><b>${i + 1}. ${esc(it.n)}</b><br><small class="muted">${esc(it.d)}</small>
+            <div class="field2" style="margin-top:6px">
+              <input data-dose="${i}" value="${esc(it.dose)}" aria-label="Dose de ${esc(it.n)}" style="padding:6px 10px" />
+              <input data-video="${i}" type="url" value="${esc(it.v || '')}" placeholder="Link do seu vídeo (opcional)" aria-label="Vídeo de ${esc(it.n)}" style="padding:6px 10px" />
+            </div></div>
+          <div class="stack">
+            ${i ? `<button type="button" class="ghost small" data-up="${i}" aria-label="Subir">↑</button>` : ''}
+            <button type="button" class="ghost small" data-rm="${i}" aria-label="Remover">✕</button>
+          </div>
         </div>`).join('')
       : '<p class="muted">Nenhum exercício ainda.</p>';
   };
+  const drawLib = () => {
+    const q = $('#shBusca', body).value.trim().toLowerCase();
+    const list = EXERCICIOS.filter(e => (!region || e.r === region) && (!q || (e.n + ' ' + e.r + ' ' + e.d).toLowerCase().includes(q)));
+    $('#shLib', body).innerHTML = list.map(e => `<button type="button" data-add="${e.id}"><span><b>${esc(e.n)}</b> <small class="muted">· ${esc(e.r)}</small></span><span style="color:var(--brand)">＋</span></button>`).join('')
+      || '<p class="muted" style="padding:10px">Nada encontrado. Escreva um exercício próprio abaixo.</p>';
+  };
+  const addEx = e => { s.itens.push({ e: e.id, n: e.n, d: e.d, dose: e.dose }); drawItems(); };
   drawItems();
+  drawLib();
+
   $('#shItems', body).onclick = e => {
-    const b = e.target.closest('[data-rm]');
-    if (b) { s.itens.splice(Number(b.dataset.rm), 1); drawItems(); }
+    const rm = e.target.closest('[data-rm]');
+    const up = e.target.closest('[data-up]');
+    if (rm) s.itens.splice(Number(rm.dataset.rm), 1);
+    if (up) { const i = Number(up.dataset.up); [s.itens[i - 1], s.itens[i]] = [s.itens[i], s.itens[i - 1]]; }
+    if (rm || up) drawItems();
   };
   $('#shItems', body).oninput = e => {
     if (e.target.dataset.dose != null) s.itens[Number(e.target.dataset.dose)].dose = e.target.value;
+    if (e.target.dataset.video != null) s.itens[Number(e.target.dataset.video)].v = e.target.value.trim();
   };
-  $('#shAdd', body).onclick = () => {
-    const ex = EXERCICIOS[Number($('#shReg', body).value)];
-    s.itens.push({ n: ex.n, d: ex.d, dose: ex.dose });
-    drawItems();
+  $('#shBusca', body).oninput = drawLib;
+  $('#shReg', body).onclick = e => {
+    const b = e.target.closest('[data-r]');
+    if (!b) return;
+    region = b.dataset.r;
+    $$('#shReg .chip', body).forEach(c => c.classList.toggle('on', c === b));
+    drawLib();
   };
-  $('#shCustom', body).onclick = () => {
-    const n = prompt('Nome do exercício');
-    if (!n) return;
-    const d = prompt('Como fazer (explique de forma simples)') || '';
-    const dose = prompt('Séries × repetições ou tempo', '3 × 10') || '';
-    s.itens.push({ n, d, dose });
+  $('#shLib', body).onclick = e => {
+    const b = e.target.closest('[data-add]');
+    if (b) { addEx(byId(b.dataset.add)); toast('Adicionado'); }
+  };
+  const modelo = $('#shModelo', body);
+  if (modelo) modelo.onchange = () => {
+    if (modelo.value === '') return;
+    if (s.itens.length && !confirm('Trocar os exercícios atuais pelos do modelo?')) return;
+    s.itens = [];
+    MODELOS[Number(modelo.value)].it.forEach(id => addEx(byId(id)));
+    toast('Modelo carregado: ajuste as doses para o seu paciente');
+  };
+  $('#cxAdd', body).onclick = () => {
+    const n = $('#cxN', body).value.trim();
+    if (!n) return toast('Dê um nome ao exercício');
+    s.itens.push({ n, d: $('#cxD', body).value.trim(), dose: $('#cxDose', body).value.trim() });
+    $('#cxN', body).value = ''; $('#cxD', body).value = '';
     drawItems();
   };
 
   const collect = () => {
     s.paciente = $('#shPac', body).value.trim();
-    s.freq = $('#shFreq', body).value.trim();
+    s.telPac = $('#shTelPac', body).value.trim();
+    s.dias = $$('[data-dia]', body).filter(c => c.checked).map(c => Number(c.dataset.dia));
+    s.vezes = Number($('#shVezes', body).value);
+    s.freq = freqText(s);
     s.obs = $('#shObs', body).value.trim();
     s.prof = $('#shProf', body).value.trim();
+    s.tel = $('#shTel', body).value.trim();
     store.set('profAssinatura', s.prof);
+    store.set('profTel', s.tel);
   };
   const save = () => {
     collect();
@@ -216,16 +288,70 @@ function openSheetEditor(root, existing) {
     store.set('fichas', list);
     return true;
   };
-  $('#shSave', body).onclick = () => { if (save()) { closeSheet(); toast('Ficha salva'); renderCasa(root); } };
-  $('#shSend', body).onclick = () => { if (save()) { shareText('Seus exercícios', sheetText(s)); closeSheet(); renderCasa(root); } };
+  $('#shSave', body).onclick = () => { if (save()) { closeSheet(); toast('Programa salvo'); renderCasa(root); } };
+  $('#shSend', body).onclick = async () => { if (save()) { await sendProgram(s); closeSheet(); renderCasa(root); } };
   $('#shCopy', body).onclick = () => { collect(); copyText(sheetText(s)); };
+  $('#shPreview', body).onclick = async () => {
+    collect();
+    if (!s.itens.length) return toast('Adicione pelo menos um exercício');
+    window.open(await programLink(s), '_blank', 'noopener');
+  };
   const del = $('#shDel', body);
   if (del) del.onclick = () => {
-    if (!confirm('Apagar esta ficha?')) return;
+    if (!confirm('Apagar este programa e os relatórios dele?')) return;
     store.set('fichas', store.get('fichas', []).filter(x => x.id !== s.id));
     closeSheet();
     renderCasa(root);
   };
+}
+
+/* ---------------- Relatório que volta do paciente ---------------- */
+
+export async function importReport(encoded, root) {
+  let rep;
+  try {
+    rep = await decodeData(encoded);
+    if (!rep?.pid || !Array.isArray(rep.logs)) throw new Error('relatório');
+  } catch {
+    return toast('Esse link de relatório está incompleto');
+  }
+  const list = store.get('fichas', []);
+  const s = list.find(x => x.id === rep.pid);
+  if (!s) {
+    return openSheet('Relatório recebido', `<p>Esse relatório é de um programa que não está salvo neste aparelho${rep.pac ? ` (paciente: <b>${esc(rep.pac)}</b>)` : ''}.</p>
+      <p class="muted">Abra o link no celular ou computador em que você criou o programa.</p>`);
+  }
+  const seen = new Set((s.relatorios || []).map(l => l.t));
+  const novos = rep.logs.filter(l => !seen.has(l.t));
+  s.relatorios = [...(s.relatorios || []), ...novos].sort((a, b) => a.t - b.t);
+  store.set('fichas', list);
+  renderCasa(root);
+  openEvolution(s, novos.length);
+}
+
+function openEvolution(s, novos) {
+  const logs = s.relatorios || [];
+  const ad7 = adherence(logs, s.dias, s.vezes, 7);
+  const ad30 = adherence(logs, s.dias, s.vezes, 30);
+  const pains = logs.slice(-10).map(l => l.dor);
+  const first = logs.slice(0, 3), last = logs.slice(-3);
+  const avg = arr => arr.length ? (arr.reduce((a, l) => a + l.dor, 0) / arr.length).toFixed(1).replace('.', ',') : '—';
+  const alerta = logs.slice(-3).some(l => l.dor > 5);
+  openSheet(`Evolução · ${s.paciente || 'paciente'}`, `
+    ${novos != null ? `<p class="tag ok">${novos} sessão(ões) nova(s) importada(s)</p>` : ''}
+    ${alerta ? '<div class="notice bad">Dor acima de 5 nas últimas sessões: vale ligar, ajustar a carga ou antecipar a reavaliação.</div>' : ''}
+    <div class="grid2" style="grid-template-columns:repeat(3,1fr);gap:8px">
+      <div class="card" style="text-align:center;padding:10px"><div class="result" style="margin:0">${ad7}%</div><small>adesão 7 dias</small></div>
+      <div class="card" style="text-align:center;padding:10px"><div class="result" style="margin:0">${ad30}%</div><small>adesão 30 dias</small></div>
+      <div class="card" style="text-align:center;padding:10px"><div class="result" style="margin:0">${avg(first)} → ${avg(last)}</div><small>dor (início → agora)</small></div>
+    </div>
+    <h3>Dor por sessão</h3>
+    <div class="sparkbars" aria-label="Dor nas últimas sessões: ${pains.join(', ')}">${pains.map(p => `<span style="height:${Math.max(4, p * 10)}%;background:hsl(${120 - p * 12} 60% 42%)" title="${p}"></span>`).join('')}</div>
+    <h3>Sessões</h3>
+    <table><thead><tr><th>Data</th><th>Feitos</th><th>Dor</th><th>Comentário</th></tr></thead><tbody>
+      ${logs.slice().reverse().slice(0, 30).map(l => `<tr><td>${new Date(l.t).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}</td><td>${l.d}/${l.n}</td><td>${l.dor}</td><td>${esc([{ facil: 'Fácil', ok: '', dificil: 'Difícil' }[l.dif], l.o].filter(Boolean).join(' · '))}</td></tr>`).join('')}
+    </tbody></table>
+  `);
 }
 
 function openAddApp(root) {

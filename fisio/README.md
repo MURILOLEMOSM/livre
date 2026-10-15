@@ -10,7 +10,7 @@ App web (PWA) para **estudantes e fisioterapeutas**. Funciona offline, pode ser 
 | **🤝 Atender** | Checklist antes do atendimento, primeiro contato, roteiro de anamnese, sequência do exame físico, **o que falar × o que evitar** (linguagem sem efeito nocebo), postura e comportamento, ética (COFFITO 424/2013), **sinais de alerta para parar e encaminhar**, semáforo da dor, situações difíceis, dicas para estágio e OSCE e um modelo de evolução **SOAP** para copiar. |
 | **🧠 Estudar** | Cartões com repetição espaçada (caixas de Leitner): mnemônicos, dermátomos e miótomos, inervação muscular, lesões clássicas e testes especiais. Dá para criar os próprios cartões. |
 | **📐 Ferramentas** | Escala de dor 0–10, IMC, FC alvo (Karvonen/Tanaka), inclinômetro com o sensor do celular, ADM de referência, MRC, Ashworth modificada, Borg CR10, Glasgow, sinais vitais e testes especiais por região (como fazer e o que significa positivo). |
-| **🏠 Casa** | Montador de **ficha de exercícios domiciliares** com 22 exercícios prontos (dose editável), enviada pelo WhatsApp ou copiada. **Radar de apps** de prescrição (Physitrack/PhysiApp, MedBridge, Wibbi, HEP2go, Rehab My Patient, SimpleSet) e de gestão no Brasil (Fisioly, Vedius, ZenFisio), com a sua avaliação de cada um e a opção de adicionar outros. |
+| **🏠 Casa** | **Programas de exercícios domiciliares** (alternativa gratuita a apps como Physitrack/PhysiApp): biblioteca de 31 exercícios com busca, 6 modelos prontos (lombar, joelho, ombro, pós-operatório, equilíbrio no idoso, cervical), dias da semana, vezes por dia, link do seu próprio vídeo por exercício. O paciente recebe **um link** (`paciente.html`) e marca as séries, usa o cronômetro, registra dor e dificuldade, vê a sequência de dias, cria lembrete na agenda e **manda o relatório de volta** pelo WhatsApp; o fisio abre o link e vê adesão (7 e 30 dias), evolução da dor e comentários. Sem servidor: o programa e o relatório viajam comprimidos dentro do próprio link. **Radar de apps** de prescrição (Physitrack/PhysiApp, MedBridge, Wibbi, HEP2go, Rehab My Patient, SimpleSet) e de gestão no Brasil (Fisioly, Vedius, ZenFisio), com a sua avaliação de cada um e a opção de adicionar outros. |
 
 ## Por que essas funções (pesquisa)
 
@@ -37,7 +37,7 @@ No Netlify, crie um **site novo** apontando para este repositório com *Base dir
 
 ```
 fisio/
-├── index.html · manifest.webmanifest · sw.js · netlify.toml
+├── index.html · paciente.html · manifests · sw.js · netlify.toml
 ├── css/app.css
 ├── icons/
 └── js/
@@ -47,7 +47,9 @@ fisio/
     ├── atender.js      # guia de atendimento e SOAP
     ├── estudar.js      # cartões e mnemônicos
     ├── ferramentas.js  # escalas, calculadoras, testes, inclinômetro
-    └── casa.js         # fichas de exercícios e radar de apps
+    ├── casa.js         # programas, relatórios e radar de apps
+    ├── exercicios.js   # biblioteca, modelos e codificação dos links
+    └── paciente.js     # tela do paciente (paciente.html)
 ```
 
 ## Aviso

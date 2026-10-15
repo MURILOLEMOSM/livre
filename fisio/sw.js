@@ -2,11 +2,12 @@
    Arquivos do app: cache primeiro. Fontes: usa cache e atualiza em segundo plano.
    Ao mudar qualquer arquivo do app, suba o número da versão. */
 
-const VERSION = 'fisiopalma-v1';
+const VERSION = 'fisiopalma-v2';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './css/app.css',
   './js/app.js', './js/util.js', './js/db.js', './js/estante.js', './js/atender.js',
   './js/estudar.js', './js/ferramentas.js', './js/casa.js',
+  './js/exercicios.js', './js/paciente.js', './paciente.html', './manifest-paciente.webmanifest',
   './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png',
 ];
 

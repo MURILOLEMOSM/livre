@@ -5,7 +5,7 @@ import { renderEstante } from './estante.js';
 import { renderAtender } from './atender.js';
 import { renderEstudar } from './estudar.js';
 import { renderFerramentas } from './ferramentas.js';
-import { renderCasa } from './casa.js';
+import { renderCasa, importReport } from './casa.js';
 
 const ROUTES = {
   estante: renderEstante,
@@ -16,7 +16,14 @@ const ROUTES = {
 };
 
 async function route() {
-  const name = (location.hash.replace(/^#\/?/, '').split('/')[0]) || 'estante';
+  const parts = location.hash.replace(/^#\/?/, '').split('/');
+  // link de relatório que o paciente mandou: importa e mostra a evolução
+  if (parts[0] === 'relatorio' && parts[1]) {
+    history.replaceState(null, '', '#/casa');
+    await route();
+    return importReport(parts[1], $('#view'));
+  }
+  const name = parts[0] || 'estante';
   const render = ROUTES[name] || ROUTES.estante;
   closeSheet();
   $$('.tabbar a').forEach(a => a.classList.toggle('on', a.dataset.nav === name));
