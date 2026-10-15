@@ -10,13 +10,14 @@ App web (PWA) para **estudantes e fisioterapeutas**. Funciona offline, pode ser 
 | **🤝 Atender** | Checklist antes do atendimento, primeiro contato, roteiro de anamnese, sequência do exame físico, **o que falar × o que evitar** (linguagem sem efeito nocebo), postura e comportamento, ética (COFFITO 424/2013), **sinais de alerta para parar e encaminhar**, semáforo da dor, situações difíceis, dicas para estágio e OSCE e um modelo de evolução **SOAP** para copiar. |
 | **🧠 Estudar** | Cartões com repetição espaçada (caixas de Leitner): mnemônicos, dermátomos e miótomos, inervação muscular, lesões clássicas e testes especiais. Dá para criar os próprios cartões. |
 | **📐 Ferramentas** | Escala de dor 0–10, IMC, FC alvo (Karvonen/Tanaka), inclinômetro com o sensor do celular, ADM de referência, MRC, Ashworth modificada, Borg CR10, Glasgow, sinais vitais e testes especiais por região (como fazer e o que significa positivo). |
-| **🏠 Casa** | **Programas de exercícios domiciliares** (alternativa gratuita a apps como Physitrack/PhysiApp): biblioteca de 31 exercícios com busca, 6 modelos prontos (lombar, joelho, ombro, pós-operatório, equilíbrio no idoso, cervical), dias da semana, vezes por dia, link do seu próprio vídeo por exercício. O paciente recebe **um link** (`paciente.html`) e marca as séries, usa o cronômetro, registra dor e dificuldade, vê a sequência de dias, cria lembrete na agenda e **manda o relatório de volta** pelo WhatsApp; o fisio abre o link e vê adesão (7 e 30 dias), evolução da dor e comentários. Sem servidor: o programa e o relatório viajam comprimidos dentro do próprio link. **Radar de apps** de prescrição (Physitrack/PhysiApp, MedBridge, Wibbi, HEP2go, Rehab My Patient, SimpleSet) e de gestão no Brasil (Fisioly, Vedius, ZenFisio), com a sua avaliação de cada um e a opção de adicionar outros. |
+| **🏥 Clínica** | **Tudo em um só**, juntando o que cada app do mercado faz separado. **Agenda** (semana, repetição semanal, aviso de horário ocupado, confirmação pelo WhatsApp com mensagem pronta, teleconsulta com sala de vídeo gratuita Jitsi, situação: agendada/confirmada/realizada/faltou). **Pacientes e prontuário** (cadastro, avaliação inicial com roteiro, evoluções SOAP, histórico de atendimentos, programas ligados ao paciente, impressão do prontuário). **Exercícios** (alternativa gratuita a Physitrack/PhysiApp: biblioteca de 31 exercícios, 6 modelos, link para o paciente com séries, cronômetro, dor, lembrete na agenda e relatório de volta com adesão e evolução da dor; orientações prontas para mandar). **Financeiro** (recebido, a receber, despesas, saldo do mês, pendentes, recibo para reembolso, planilha CSV). **Apps** (radar com o que cada app oferece e o equivalente no FisioPalma). **Ajustes** (PIN para abrir a aba, backup da clínica, assinatura com CREFITO). |
 
 ## Por que essas funções (pesquisa)
 
 - Estudantes relatam **ansiedade no estágio e no OSCE**, pouca experiência prévia em setores como UTI e excesso de foco em "entregar avaliação" → roteiros, checklist e cartões de revisão.
 - Fisioterapeutas usam no dia a dia **goniometria por app, testes especiais e escalas**, normalmente espalhados em vários apps → tudo em uma aba só.
-- Os apps de exercício domiciliar mais citados são pagos e quase todos em inglês; muita gente acaba mandando exercícios por WhatsApp → ficha pronta em português que vai direto para o WhatsApp.
+- Os apps de exercício domiciliar mais citados são pagos e quase todos em inglês; muita gente acaba mandando exercícios por WhatsApp → programa em português que vai direto para o WhatsApp, com relatório de volta.
+- Autônomos acabam pagando vários sistemas (prescrição + agenda/prontuário/financeiro) → tudo na aba Clínica, sem mensalidade.
 - Livros técnicos são caros e ficam espalhados entre físicos, PDFs e bibliotecas virtuais → estante única com o link/arquivo de cada um.
 
 ## Rodar no computador
@@ -47,7 +48,8 @@ fisio/
     ├── atender.js      # guia de atendimento e SOAP
     ├── estudar.js      # cartões e mnemônicos
     ├── ferramentas.js  # escalas, calculadoras, testes, inclinômetro
-    ├── casa.js         # programas, relatórios e radar de apps
+    ├── clinica.js      # agenda, pacientes/prontuário, financeiro, ajustes
+    ├── casa.js         # programas de exercícios, relatórios e radar de apps
     ├── exercicios.js   # biblioteca, modelos e codificação dos links
     └── paciente.js     # tela do paciente (paciente.html)
 ```

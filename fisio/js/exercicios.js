@@ -118,3 +118,13 @@ export function adherence(logs, dias, vezes, days = 7) {
   const expected = prescribedSessions(dias, vezes, days);
   return expected ? Math.min(100, Math.round((done / expected) * 100)) : 0;
 }
+
+// Folhetos curtos de educação em saúde para mandar ao paciente
+export const ORIENTACOES = [
+  { t: 'Dor nas costas: continue se mexendo', x: 'A maioria das dores nas costas melhora em algumas semanas.\n• Ficar de repouso na cama costuma atrasar a melhora: mantenha suas atividades, adaptando o ritmo.\n• Caminhar é um ótimo remédio.\n• Exames de imagem mostram alterações comuns até em quem não sente dor; elas não explicam tudo.\n• Procure atendimento logo se tiver perda de força nas pernas, dormência na região íntima ou dificuldade para urinar.' },
+  { t: 'Gelo ou calor?', x: 'Gelo: nas primeiras 48–72 h depois de uma torção ou pancada, ou quando há inchaço. 15 a 20 minutos, sempre com um pano entre o gelo e a pele.\nCalor: para músculos tensos e rigidez. 15 a 20 minutos, morno, nunca quente demais.\nNão durma com bolsa de gelo ou de calor. Se você tem diabetes, problemas de circulação ou pouca sensibilidade na pele, pergunte antes ao seu fisioterapeuta.' },
+  { t: 'Sentir dor não quer dizer que está machucando', x: 'A dor é um alarme do corpo, e às vezes esse alarme fica sensível demais, principalmente quando a dor dura muito tempo.\nPor isso, um pouco de desconforto durante os exercícios é esperado e seguro: até 5 numa escala de 0 a 10, desde que melhore até o dia seguinte.\nSono, estresse e medo também aumentam a dor. Movimento, aos poucos, ensina o corpo que é seguro se mexer de novo.' },
+  { t: 'Casa segura: prevenção de quedas', x: '• Tire tapetes soltos ou prenda com fita antiderrapante.\n• Deixe uma luz acesa no caminho do banheiro à noite.\n• Barras de apoio no box e perto do vaso ajudam muito.\n• Use calçados fechados atrás e com sola de borracha.\n• Deixe o que usa todo dia em altura fácil, sem precisar subir em banco.\n• Levante devagar da cama: sente, espere alguns segundos e só então fique de pé.' },
+  { t: 'Trabalho sentado e home office', x: '• A melhor postura é a próxima: mude de posição a cada 30–40 minutos.\n• Tela na altura dos olhos, pés apoiados no chão ou num apoio.\n• Levante para beber água, atender o telefone ou ir ao banheiro: são pausas que contam.\n• Faça 2 ou 3 dos seus exercícios no meio do expediente.' },
+  { t: 'Sono e dor', x: '• Dormir mal deixa o corpo mais sensível à dor, e a dor atrapalha o sono: vale cuidar dos dois.\n• Tente deitar e acordar no mesmo horário.\n• Evite telas e café perto da hora de dormir.\n• Travesseiros entre os joelhos (de lado) ou embaixo dos joelhos (de barriga para cima) podem deixar mais confortável.' },
+];

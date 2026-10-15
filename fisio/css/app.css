@@ -273,3 +273,17 @@ body.patient { padding-bottom: 24px; }
 .dias input:focus-visible + span { outline: 2px solid var(--accent); }
 .sparkbars { display: flex; align-items: flex-end; gap: 4px; height: 90px; padding: 6px; background: var(--bg); border-radius: 10px; margin-bottom: 10px; }
 .sparkbars span { flex: 0 1 28px; border-radius: 4px 4px 0 0; min-width: 6px; }
+
+/* ---------- Clínica ---------- */
+.week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.wday { flex-direction: column; gap: 0; padding: 6px 0; min-height: 60px; justify-content: center; background: var(--card); color: var(--ink); border: 1px solid var(--line); }
+.wday small { font-size: .68rem; color: var(--muted); text-transform: uppercase; }
+.wday b { font-size: 1.05rem; }
+.wday i { font-style: normal; color: var(--accent); font-size: .8rem; line-height: 1; min-height: .8rem; }
+.wday.today { border-color: var(--accent); }
+.wday.on { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+.wday.on small, .wday.on i { color: var(--brand-ink); }
+.appt .hora { font-weight: 700; color: var(--brand); font-variant-numeric: tabular-nums; }
+.stat { padding: 10px 12px; margin: 0; }
+.stat .result { font-size: 1.15rem; margin: 2px 0 0; }
+.evo p { margin: .25rem 0; }

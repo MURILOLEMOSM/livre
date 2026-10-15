@@ -2,27 +2,27 @@
 // relatório volta) + radar de apps de prescrição
 
 import { $, $$, esc, uid, toast, store, openSheet, closeSheet, shareText, copyText } from './util.js';
-import { EXERCICIOS, MODELOS, DIAS, byId, encodeData, decodeData, appBase, programPayload, adherence } from './exercicios.js';
+import { EXERCICIOS, MODELOS, DIAS, ORIENTACOES, byId, encodeData, decodeData, appBase, programPayload, adherence } from './exercicios.js';
 
 // Conferido em out/2026. Preços e recursos mudam: o app mostra a data e o link oficial.
 const RADAR = [
-  { n: 'Physitrack + PhysiApp', tipo: 'Prescrição', site: 'https://www.physitrack.com', para: 'Clínicas e autônomos', plat: 'Web · iOS · Android', preco: 'Pago (teste grátis de 14 dias)', pt: true,
+  { n: 'Physitrack + PhysiApp', aqui: 'Programas com link para o paciente, registro de dor e adesão.', tipo: 'Prescrição', site: 'https://www.physitrack.com', para: 'Clínicas e autônomos', plat: 'Web · iOS · Android', preco: 'Pago (teste grátis de 14 dias)', pt: true,
     d: 'Biblioteca com milhares de vídeos de exercícios, o paciente recebe o programa no app PhysiApp, registra o que fez e a dor. Tem telessaúde e questionários.' },
-  { n: 'MedBridge', tipo: 'Prescrição', site: 'https://www.medbridge.com', para: 'Clínicas (foco nos EUA)', plat: 'Web · iOS · Android', preco: 'Pago (assinatura anual)', pt: false,
+  { n: 'MedBridge', aqui: 'Programas de exercícios + aba Estudar.', tipo: 'Prescrição', site: 'https://www.medbridge.com', para: 'Clínicas (foco nos EUA)', plat: 'Web · iOS · Android', preco: 'Pago (assinatura anual)', pt: false,
     d: 'Programa de exercícios domiciliares junto com cursos de educação continuada na mesma assinatura.' },
-  { n: 'Wibbi', tipo: 'Prescrição', site: 'https://www.wibbi.com', para: 'Autônomos e clínicas pequenas', plat: 'Web · iOS · Android', preco: 'Pago (mensal)', pt: false,
+  { n: 'Wibbi', aqui: 'Biblioteca com busca e modelos prontos.', tipo: 'Prescrição', site: 'https://www.wibbi.com', para: 'Autônomos e clínicas pequenas', plat: 'Web · iOS · Android', preco: 'Pago (mensal)', pt: false,
     d: 'Grande biblioteca de exercícios e integrações com prontuários. Prescrição simples.' },
-  { n: 'HEP2go', tipo: 'Prescrição', site: 'https://www.hep2go.com', para: 'Estudantes e autônomos', plat: 'Navegador', preco: 'Gratuito (versão Pro paga)', pt: false,
+  { n: 'HEP2go', aqui: 'Ficha em texto para imprimir ou mandar.', tipo: 'Prescrição', site: 'https://www.hep2go.com', para: 'Estudantes e autônomos', plat: 'Navegador', preco: 'Gratuito (versão Pro paga)', pt: false,
     d: 'O mais barato: monta e imprime/manda fichas com imagens. Recursos mais simples e sem integração com prontuário.' },
-  { n: 'Rehab My Patient', tipo: 'Prescrição', site: 'https://www.rehabmypatient.com', para: 'Autônomos', plat: 'Web · iOS · Android', preco: 'Pago (com período de teste)', pt: false,
+  { n: 'Rehab My Patient', aqui: 'Vídeo próprio por exercício, orientações prontas e teleconsulta pela agenda.', tipo: 'Prescrição', site: 'https://www.rehabmypatient.com', para: 'Autônomos', plat: 'Web · iOS · Android', preco: 'Pago (com período de teste)', pt: false,
     d: 'Vídeos em HD, permite subir suas próprias imagens e folhetos de orientação; tem teleatendimento.' },
-  { n: 'SimpleSet', tipo: 'Prescrição', site: 'https://www.simpleset.net', para: 'Autônomos, clínicas e redes', plat: 'Web · iOS · Android', preco: 'Pago (planos por porte)', pt: false,
+  { n: 'SimpleSet', aqui: 'Tela do paciente com séries, cronômetro, lembrete e histórico.', tipo: 'Prescrição', site: 'https://www.simpleset.net', para: 'Autônomos, clínicas e redes', plat: 'Web · iOS · Android', preco: 'Pago (planos por porte)', pt: false,
     d: 'App do paciente com lembretes e registro de séries, repetições e tempo (adesão).' },
-  { n: 'Fisioly', tipo: 'Gestão (Brasil)', site: 'https://www.google.com/search?q=Fisioly+fisioterapia', busca: true, para: 'Autônomos e clínicas', plat: 'Web', preco: 'Plano gratuito para autônomos', pt: true,
+  { n: 'Fisioly', aqui: 'Agenda, prontuário e financeiro na aba Clínica.', tipo: 'Gestão (Brasil)', site: 'https://www.google.com/search?q=Fisioly+fisioterapia', busca: true, para: 'Autônomos e clínicas', plat: 'Web', preco: 'Plano gratuito para autônomos', pt: true,
     d: 'Agenda, prontuário e financeiro feitos para fisioterapia no Brasil.' },
-  { n: 'Vedius', tipo: 'Gestão (Brasil)', site: 'https://www.google.com/search?q=Vedius+fisioterapia', busca: true, para: 'Clínicas', plat: 'Web · app', preco: 'Pago', pt: true,
+  { n: 'Vedius', aqui: 'Agenda com confirmação por WhatsApp e prontuário com evolução SOAP.', tipo: 'Gestão (Brasil)', site: 'https://www.google.com/search?q=Vedius+fisioterapia', busca: true, para: 'Clínicas', plat: 'Web · app', preco: 'Pago', pt: true,
     d: 'Agenda, financeiro e prontuário pensado para as exigências do COFFITO.' },
-  { n: 'ZenFisio', tipo: 'Gestão (Brasil)', site: 'https://www.google.com/search?q=ZenFisio+fisioterapia', busca: true, para: 'Clínicas', plat: 'Web', preco: 'Pago', pt: true,
+  { n: 'ZenFisio', aqui: 'Financeiro e recibos (sem emissão de nota fiscal).', tipo: 'Gestão (Brasil)', site: 'https://www.google.com/search?q=ZenFisio+fisioterapia', busca: true, para: 'Clínicas', plat: 'Web', preco: 'Pago', pt: true,
     d: 'Gestão de clínica com emissão de nota fiscal de serviço (NFS-e).' },
 ];
 
@@ -33,49 +33,81 @@ const freqText = s => {
   return `${s.vezes || 1}× ao dia, ${dias}`;
 };
 
-export function renderCasa(root) {
+// Re-desenha a sub-tela atual depois de salvar/apagar (programas ou radar)
+let current = () => {};
+
+const adTag = s => {
+  const logs = s.relatorios || [];
+  if (!logs.length) return '<span class="tag">Sem relatório ainda</span>';
+  const ad = adherence(logs, s.dias, s.vezes);
+  return `<span class="tag ${ad >= 80 ? 'ok' : ad >= 50 ? 'warn' : 'bad'}">${ad}% adesão (7 dias)</span>`;
+};
+
+export function programCard(s) {
+  const last = (s.relatorios || []).at(-1);
+  return `
+    <div class="card">
+      <div class="row between">
+        <div><b>${esc(s.paciente || 'Sem nome')}</b><br><small class="muted">${s.itens.length} exercícios · ${esc(s.freq || '')} · criado em ${esc(s.data)}</small></div>
+        ${adTag(s)}
+      </div>
+      ${last ? `<p class="muted" style="font-size:.84rem;margin:.4rem 0 0">Última sessão ${new Date(last.t).toLocaleDateString('pt-BR')} · dor ${last.dor}/10${last.o ? ' · “' + esc(last.o) + '”' : ''}</p>` : ''}
+      <div class="row" style="margin-top:10px">
+        <button type="button" class="small" data-send="${s.id}">Enviar ao paciente</button>
+        ${(s.relatorios || []).length ? `<button type="button" class="soft small" data-evo="${s.id}">Evolução</button>` : ''}
+        <button type="button" class="ghost small" data-edit="${s.id}">Editar</button>
+      </div>
+    </div>`;
+}
+
+// Liga os botões dos cartões de programa dentro de `root` (usado também na ficha do paciente)
+export function bindProgramCards(root, onChange) {
   const sheets = store.get('fichas', []);
-  const myApps = store.get('radarMeus', []);
-  const notes = store.get('radarNotas', {});
-  const apps = [...RADAR, ...myApps.map(a => ({ ...a, meu: true }))];
-  const shown = apps.filter(a => radarFilter === 'todos' || (radarFilter === 'pt' ? a.pt : a.tipo === radarFilter));
+  const find = id => sheets.find(s => s.id === id);
+  $$('[data-edit]', root).forEach(b => { b.onclick = () => openEditor(onChange, find(b.dataset.edit)); });
+  $$('[data-send]', root).forEach(b => { b.onclick = () => sendProgram(find(b.dataset.send)); });
+  $$('[data-evo]', root).forEach(b => { b.onclick = () => openEvolution(find(b.dataset.evo)); });
+}
 
+export function renderProgramas(root) {
+  current = () => renderProgramas(root);
+  const sheets = store.get('fichas', []);
   root.innerHTML = `
-    <h1>Exercícios em casa</h1>
-    <p class="muted">Monte o programa, mande o link pelo WhatsApp e acompanhe: o paciente marca o que fez, registra a dor e o relatório volta para você. Grátis e sem cadastro.</p>
-
-    <div class="card" style="font-size:.9rem">
-      <b>Como funciona</b>
-      <ol style="margin-bottom:0">
+    <p class="muted">Monte o programa, mande o link pelo WhatsApp e acompanhe: o paciente marca o que fez, registra a dor e o relatório volta para você.</p>
+    <details class="acc"><summary>Como funciona</summary><div class="acc-body">
+      <ol style="margin:0">
         <li>Você monta o programa (do zero, da biblioteca ou de um modelo).</li>
         <li>O paciente abre o link: vê os exercícios, marca as séries, usa o cronômetro e diz quanto doeu.</li>
         <li>Ele toca em "Enviar relatório" e você abre o link aqui para ver adesão e evolução da dor.</li>
       </ol>
-    </div>
+    </div></details>
 
     <div class="row between"><h2 style="margin:0">Programas</h2><button type="button" id="newSheet">＋ Novo programa</button></div>
-    <div style="margin-top:10px">
-      ${sheets.length ? sheets.map(s => {
-        const logs = s.relatorios || [];
-        const last = logs.at(-1);
-        return `
-        <div class="card">
-          <div class="row between">
-            <div><b>${esc(s.paciente || 'Sem nome')}</b><br><small class="muted">${s.itens.length} exercícios · ${esc(s.freq || '')} · criado em ${esc(s.data)}</small></div>
-            ${logs.length ? `<span class="tag ${adherence(logs, s.dias, s.vezes) >= 80 ? 'ok' : adherence(logs, s.dias, s.vezes) >= 50 ? 'warn' : 'bad'}">${adherence(logs, s.dias, s.vezes)}% adesão (7 dias)</span>` : '<span class="tag">Sem relatório ainda</span>'}
-          </div>
-          ${last ? `<p class="muted" style="font-size:.84rem;margin:.4rem 0 0">Última sessão ${new Date(last.t).toLocaleDateString('pt-BR')} · dor ${last.dor}/10${last.o ? ' · “' + esc(last.o) + '”' : ''}</p>` : ''}
-          <div class="row" style="margin-top:10px">
-            <button type="button" class="small" data-send="${s.id}">Enviar ao paciente</button>
-            ${logs.length ? `<button type="button" class="soft small" data-evo="${s.id}">Evolução</button>` : ''}
-            <button type="button" class="ghost small" data-edit="${s.id}">Editar</button>
-          </div>
-        </div>`;
-      }).join('') : `<div class="card empty"><div class="big">🏋️</div><p>Nenhum programa ainda. Comece com um modelo pronto e ajuste para o seu paciente.</p></div>`}
+    <div style="margin-top:10px" id="progList">
+      ${sheets.length ? sheets.map(programCard).join('') : `<div class="card empty"><div class="big">🏋️</div><p>Nenhum programa ainda. Comece com um modelo pronto e ajuste para o seu paciente.</p></div>`}
     </div>
 
-    <h2>Radar de apps</h2>
-    <p class="muted" style="margin-top:-4px">Para comparar com outras opções do mercado.</p>
+    <h2>Orientações para enviar</h2>
+    <p class="muted" style="margin-top:-4px">Textos curtos de educação em saúde, prontos para o WhatsApp.</p>
+    ${ORIENTACOES.map((o, i) => `<details class="acc"><summary>${esc(o.t)}</summary><div class="acc-body">
+      <p style="white-space:pre-line">${esc(o.x)}</p>
+      <div class="row"><button type="button" class="small" data-ori="${i}">Enviar</button><button type="button" class="ghost small" data-ori-copy="${i}">Copiar</button></div>
+    </div></details>`).join('')}
+  `;
+  $('#newSheet', root).onclick = () => openEditor(current);
+  bindProgramCards(root, current);
+  $$('[data-ori]', root).forEach(b => { b.onclick = () => { const o = ORIENTACOES[b.dataset.ori]; shareText(o.t, `*${o.t}*\n\n${o.x}`); }; });
+  $$('[data-ori-copy]', root).forEach(b => { b.onclick = () => { const o = ORIENTACOES[b.dataset.oriCopy]; copyText(`*${o.t}*\n\n${o.x}`); }; });
+}
+
+export function renderRadar(root) {
+  current = () => renderRadar(root);
+  const myApps = store.get('radarMeus', []);
+  const notes = store.get('radarNotas', {});
+  const apps = [...RADAR, ...myApps.map(a => ({ ...a, meu: true }))];
+  const shown = apps.filter(a => radarFilter === 'todos' || (radarFilter === 'pt' ? a.pt : a.tipo === radarFilter));
+  root.innerHTML = `
+    <p class="muted">O FisioPalma já junta o principal destes apps (prescrição, adesão, agenda, prontuário e financeiro). Use o radar para comparar e anotar o que você testou.</p>
     <div class="chips" id="radarChips">
       ${[['todos', 'Todos'], ['Prescrição', 'Prescrição de exercícios'], ['Gestão (Brasil)', 'Gestão de clínica (BR)'], ['pt', 'Em português']].map(([k, l]) => `<button type="button" class="chip ${radarFilter === k ? 'on' : ''}" data-rf="${esc(k)}">${l}</button>`).join('')}
     </div>
@@ -86,6 +118,7 @@ export function renderCasa(root) {
           <div class="meta">${esc(a.tipo)} · ${esc(a.plat || '')} · ${esc(a.para || '')}</div>
           <p>${esc(a.d || '')}</p>
           <p style="font-size:.85rem"><b>Preço:</b> ${esc(a.preco || '—')}</p>
+          ${a.aqui ? `<p style="font-size:.85rem"><b>No FisioPalma:</b> ${esc(a.aqui)}</p>` : ''}
           <label style="font-size:.78rem">Minha avaliação
           <select data-note="${esc(a.n)}" style="margin-top:4px">
             ${['', 'Quero testar', 'Testando', 'Uso e recomendo', 'Não gostei'].map(o => `<option value="${o}" ${(notes[a.n] || '') === o ? 'selected' : ''}>${o || '— sem avaliação —'}</option>`).join('')}
@@ -99,25 +132,19 @@ export function renderCasa(root) {
     <div class="row" style="margin-top:4px"><button type="button" class="soft" id="addApp">＋ Adicionar app ao radar</button></div>
     <p class="muted" style="font-size:.8rem">Informações conferidas em outubro de 2026 nos sites dos fornecedores e em comparativos; preços e recursos mudam, confira antes de assinar. Ao trocar dados de pacientes por qualquer app, siga a LGPD e as resoluções do COFFITO sobre teleatendimento.</p>
   `;
-
-  const find = id => sheets.find(s => s.id === id);
-  $('#newSheet').onclick = () => openEditor(root);
-  $$('[data-edit]', root).forEach(b => { b.onclick = () => openEditor(root, find(b.dataset.edit)); });
-  $$('[data-send]', root).forEach(b => { b.onclick = () => sendProgram(find(b.dataset.send)); });
-  $$('[data-evo]', root).forEach(b => { b.onclick = () => openEvolution(find(b.dataset.evo)); });
-  $('#radarChips').onclick = e => {
+  $('#radarChips', root).onclick = e => {
     const b = e.target.closest('[data-rf]');
     if (!b) return;
     radarFilter = b.dataset.rf;
-    renderCasa(root);
+    current();
   };
   $$('[data-note]', root).forEach(sel => {
     sel.onchange = () => { const n = store.get('radarNotas', {}); n[sel.dataset.note] = sel.value; store.set('radarNotas', n); toast('Anotado'); };
   });
   $$('[data-rm-app]', root).forEach(b => {
-    b.onclick = () => { store.set('radarMeus', myApps.filter(a => a.id !== b.dataset.rmApp)); renderCasa(root); };
+    b.onclick = () => { store.set('radarMeus', myApps.filter(a => a.id !== b.dataset.rmApp)); current(); };
   });
-  $('#addApp').onclick = () => openAddApp(root);
+  $('#addApp', root).onclick = () => openAddApp();
 }
 
 /* ---------------- Enviar ao paciente ---------------- */
@@ -150,10 +177,11 @@ function sheetText(s) {
 
 /* ---------------- Editor do programa ---------------- */
 
-function openEditor(root, existing) {
+export function openEditor(onDone = () => current(), existing, preset = {}) {
   const s = existing ? JSON.parse(JSON.stringify(existing)) : {
     id: uid(), paciente: '', telPac: '', dias: [1, 2, 3, 4, 5], vezes: 1, obs: '', itens: [], relatorios: [],
     prof: store.get('profAssinatura', ''), tel: store.get('profTel', ''), data: new Date().toLocaleDateString('pt-BR'),
+    ...preset,
   };
   s.dias ??= [];
   s.vezes ??= 1;
@@ -288,8 +316,8 @@ function openEditor(root, existing) {
     store.set('fichas', list);
     return true;
   };
-  $('#shSave', body).onclick = () => { if (save()) { closeSheet(); toast('Programa salvo'); renderCasa(root); } };
-  $('#shSend', body).onclick = async () => { if (save()) { await sendProgram(s); closeSheet(); renderCasa(root); } };
+  $('#shSave', body).onclick = () => { if (save()) { closeSheet(); toast('Programa salvo'); onDone(); } };
+  $('#shSend', body).onclick = async () => { if (save()) { await sendProgram(s); closeSheet(); onDone(); } };
   $('#shCopy', body).onclick = () => { collect(); copyText(sheetText(s)); };
   $('#shPreview', body).onclick = async () => {
     collect();
@@ -301,13 +329,13 @@ function openEditor(root, existing) {
     if (!confirm('Apagar este programa e os relatórios dele?')) return;
     store.set('fichas', store.get('fichas', []).filter(x => x.id !== s.id));
     closeSheet();
-    renderCasa(root);
+    onDone();
   };
 }
 
 /* ---------------- Relatório que volta do paciente ---------------- */
 
-export async function importReport(encoded, root) {
+export async function importReport(encoded) {
   let rep;
   try {
     rep = await decodeData(encoded);
@@ -325,7 +353,7 @@ export async function importReport(encoded, root) {
   const novos = rep.logs.filter(l => !seen.has(l.t));
   s.relatorios = [...(s.relatorios || []), ...novos].sort((a, b) => a.t - b.t);
   store.set('fichas', list);
-  renderCasa(root);
+  current();
   openEvolution(s, novos.length);
 }
 
@@ -354,7 +382,7 @@ function openEvolution(s, novos) {
   `);
 }
 
-function openAddApp(root) {
+function openAddApp() {
   const body = openSheet('Adicionar ao radar', `
     <form id="appForm">
       <label for="aN">Nome do app</label><input id="aN" required />
@@ -377,6 +405,6 @@ function openAddApp(root) {
     });
     store.set('radarMeus', list);
     closeSheet();
-    renderCasa(root);
+    current();
   };
 }

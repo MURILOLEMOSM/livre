@@ -5,30 +5,35 @@ import { renderEstante } from './estante.js';
 import { renderAtender } from './atender.js';
 import { renderEstudar } from './estudar.js';
 import { renderFerramentas } from './ferramentas.js';
-import { renderCasa, importReport } from './casa.js';
+import { renderClinica } from './clinica.js';
 
 const ROUTES = {
   estante: renderEstante,
   atender: renderAtender,
   estudar: renderEstudar,
   ferramentas: renderFerramentas,
-  casa: renderCasa,
+  clinica: renderClinica,
 };
 
 async function route() {
   const parts = location.hash.replace(/^#\/?/, '').split('/');
   // link de relatório que o paciente mandou: importa e mostra a evolução
   if (parts[0] === 'relatorio' && parts[1]) {
-    history.replaceState(null, '', '#/casa');
-    await route();
-    return importReport(parts[1], $('#view'));
+    sessionStorage.setItem('fp:pendingReport', parts[1]);
+    history.replaceState(null, '', '#/clinica/exercicios');
+    return route();
+  }
+  // endereço antigo da aba de exercícios
+  if (parts[0] === 'casa') {
+    history.replaceState(null, '', '#/clinica/exercicios');
+    return route();
   }
   const name = parts[0] || 'estante';
   const render = ROUTES[name] || ROUTES.estante;
   closeSheet();
   $$('.tabbar a').forEach(a => a.classList.toggle('on', a.dataset.nav === name));
   const view = $('#view');
-  await render(view);
+  await render(view, parts[1], parts[2]);
   view.focus({ preventScroll: true });
   window.scrollTo(0, 0);
 }
