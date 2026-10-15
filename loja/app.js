@@ -3,6 +3,7 @@
   'use strict';
 
   const { CONFIG, PRODUCTS, TYPES, LOOKS, svg } = window.DG;
+  const M = () => window.DGMotion;
 
   // ---------- Utilidades ----------
   const $ = (s, el = document) => el.querySelector(s);
@@ -91,7 +92,7 @@
   function cardHTML(p, i = 0) {
     const fav = favs.includes(p.id);
     return `
-      <article class="card" style="animation-delay:${Math.min(i, 12) * 35}ms">
+      <article class="card">
         <div class="card-media">
         <a class="card-art" href="#/p/${p.id}" style="background:${BG[p.id]}" aria-label="${esc(p.name)}">
           <span class="tags">
@@ -903,6 +904,8 @@
     $('#app').innerHTML = page(...args);
     document.title = page.title || 'DG Club';
     page.after?.(...args);
+    const name = { '': 'home', c: 'catalog', busca: 'catalog', p: 'product', 'old-money': 'oldmoney', clube: 'club', checkout: 'checkout', pedido: 'order', conta: 'account' }[r || ''] || 'other';
+    M()?.page(name);
     $$('.wa-link', $('#app')).forEach(el => { el.href = waUrl('Olá, DG Club! Vim pelo site.'); });
     $$('#mainNav a').forEach(el => el.classList.toggle('current', location.hash.startsWith(el.getAttribute('href'))));
     document.body.classList.toggle('on-checkout', r === 'checkout');
@@ -921,6 +924,7 @@
       cur = (i + slides.length) % slides.length;
       slides.forEach((sl, k) => { sl.classList.toggle('on', k === cur); sl.setAttribute('aria-hidden', k !== cur); });
       dots.forEach((d, k) => d.classList.toggle('on', k === cur));
+      M()?.slide(slides[cur]);
       clearInterval(sliderTimer);
       sliderTimer = setInterval(() => go(cur + 1), 6000);
     };
@@ -971,6 +975,7 @@
     megaKey = key;
     $('#mega').innerHTML = megaHTML(key);
     $('#mega').hidden = false;
+    M()?.mega();
   }
   function hideMega() { megaKey = null; $('#mega').hidden = true; }
 
@@ -1014,6 +1019,7 @@
     el.setAttribute('aria-hidden', 'false');
     $('#scrim').classList.add('on');
     document.body.classList.add('locked');
+    M()?.drawer(id);
     const f = el.querySelector('input, button:not([data-close]), a, select');
     if (f) setTimeout(() => f.focus({ preventScroll: true }), 60);
   }
@@ -1140,12 +1146,13 @@
   function paintFavCount() {
     $$('.fav-count').forEach(el => { el.textContent = favs.length; el.hidden = !favs.length; });
   }
-  function toggleFav(id) {
+  function toggleFav(id, btn) {
     favs = favs.includes(id) ? favs.filter(f => f !== id) : [...favs, id];
     store.set('dg-favs', favs);
     paintFavCount();
     const on = favs.includes(id);
     $$(`[data-fav="${id}"]`).forEach(b => { b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+    if (btn) M()?.pop(btn, on);
     toast(on ? 'Salvo nos favoritos' : 'Removido dos favoritos');
     if (location.hash === '#/favoritos') route();
   }
@@ -1158,7 +1165,7 @@
     if (hit('[data-skip]')) { $('#app').focus(); return; }
     if (hit('[data-close]') || t.id === 'scrim' || t.classList.contains('modal')) { closeAll(); return; }
     if (hit('[data-open]')) { e.preventDefault(); open(hit('[data-open]').dataset.open); return; }
-    if (hit('[data-fav]')) { e.preventDefault(); toggleFav(hit('[data-fav]').dataset.fav); return; }
+    if (hit('[data-fav]')) { e.preventDefault(); toggleFav(hit('[data-fav]').dataset.fav, hit('[data-fav]')); return; }
     if (hit('[data-quick]')) { e.preventDefault(); openQuick(hit('[data-quick]').dataset.quick); return; }
     if (hit('[data-look]')) { openLook(hit('[data-look]').dataset.look); return; }
     if (hit('[data-search]')) { toggleSearch($('#searchbar').hidden); return; }
@@ -1177,8 +1184,8 @@
       if (!pdp.size) { $('#pdpErr').textContent = 'Escolha um tamanho.'; $('.sizes').scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
       addToCart(pdp.id, pdp.color, pdp.size, pdp.qty);
       if (hit('[data-buy-now]')) { location.hash = '#/checkout'; return; }
-      open('cart');
       toast('Adicionado à sacola');
+      M() ? M().fly($('#stageArt svg'), () => open('cart')) : open('cart');
       return;
     }
 
@@ -1188,8 +1195,10 @@
     if (hit('[data-qadd]')) {
       if (!quick.size) { $('#quickErr').textContent = 'Escolha um tamanho.'; return; }
       addToCart(quick.id, quick.color, quick.size);
-      open('cart');
       toast('Adicionado à sacola');
+      const art = $('.quick-art svg');
+      closeAll(false);
+      M() ? M().fly(art, () => open('cart')) : open('cart');
       return;
     }
     if (hit('[data-look-add]')) {

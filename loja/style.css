@@ -186,8 +186,7 @@ main:focus { outline: none; }
 
 /* ---------- Cartão de produto ---------- */
 .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 44px 22px; }
-.card { position: relative; animation: rise .5s var(--ease) both; }
-@keyframes rise { from { opacity: .3; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.card { position: relative; }
 .card-media { position: relative; margin-bottom: 14px; }
 .card-art { position: relative; display: block; aspect-ratio: 3 / 4; overflow: hidden; }
 .card-art .art { position: absolute; inset: 0; display: grid; place-items: center; transition: opacity .5s var(--ease), transform .9s var(--ease); }
@@ -674,3 +673,6 @@ body.on-checkout .newsletter { display: none; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   html { scroll-behavior: auto; }
 }
+
+/* Anime.js: palavras do banner entram de baixo, recortadas */
+.slide h1, .slide-title { overflow: visible; }
