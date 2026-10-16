@@ -236,7 +236,7 @@ function openBookForm(existing, preset = {}) {
   const body = openSheet(existing ? 'Editar livro' : 'Novo livro', `
     <form id="bookForm" autocomplete="off">
       <div class="row" style="align-items:flex-start">
-        <img id="coverPrev" class="cover-preview" alt="Prévia da capa" ${b.cover || b.coverUrl ? `src="${esc(b.cover || b.coverUrl)}"` : ''} referrerpolicy="no-referrer" />
+        <img id="coverPrev" class="cover-preview" alt="" ${b.cover || b.coverUrl ? `src="${esc(b.cover || b.coverUrl)}"` : ''} referrerpolicy="no-referrer" />
         <div class="stack" style="flex:1;min-width:170px">
           <label class="btn" style="margin:0">📷 Tirar foto da capa<input type="file" accept="image/*" capture="environment" id="camInput" hidden /></label>
           <label class="btn soft" style="margin:0">🖼️ Escolher da galeria<input type="file" accept="image/*" id="galInput" hidden /></label>

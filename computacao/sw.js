@@ -2,7 +2,7 @@
    Arquivos do app: cache primeiro. Fontes: usa cache e atualiza em segundo plano.
    Ao mudar qualquer arquivo do app, suba o número da versão. */
 
-const VERSION = 'codepalma-v1';
+const VERSION = 'codepalma-v2';
 const SHELL = [
   './', './index.html', './manifest.webmanifest', './css/app.css',
   './js/app.js', './js/util.js', './js/db.js', './js/estante.js', './js/carreira.js',

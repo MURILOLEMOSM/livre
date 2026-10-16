@@ -270,3 +270,4 @@ code { background: color-mix(in srgb, var(--brand) 10%, transparent); padding: 1
 .prob .idea { color: var(--brand); }
 a.chip { text-decoration: none; display: inline-flex; align-items: center; }
 .app-card p { font-size: .9rem; }
+.cover-preview:not([src]) { visibility: visible; background: var(--line) center / 40% no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239A98B5' stroke-width='1.6'%3E%3Cpath d='M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z'/%3E%3Cpath d='M8 7h6'/%3E%3C/svg%3E"); }
