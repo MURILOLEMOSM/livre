@@ -69,14 +69,44 @@ async function shrinkImage(file, maxH = 640) {
   return new Promise(r => c.toBlob(r, 'image/jpeg', 0.82));
 }
 
+// o ISBN-13 é o EAN que começa com 978 ou 979; o código menor ao lado é o preço
+const isIsbn = v => /^97[89]\d{10}$/.test(v);
+
 async function readBarcode(file) {
-  if (!('BarcodeDetector' in window)) return null;
+  if ('BarcodeDetector' in window) {
+    const det = new BarcodeDetector({ formats: ['ean_13'] });
+    const codes = await det.detect(await createImageBitmap(file)).catch(() => []);
+    const hit = codes.map(c => c.rawValue.replace(/\D/g, '')).find(isIsbn);
+    if (hit) return hit;
+  }
+  return readBarcodeZxing(file);
+}
+
+/* Safari (iPhone) não tem BarcodeDetector: carrega o ZXing só quando precisa */
+let zxingP;
+function loadZxing() {
+  zxingP ||= new Promise((resolve, reject) => {
+    const s = Object.assign(document.createElement('script'), {
+      src: 'https://unpkg.com/@zxing/library@0.21.3/umd/index.min.js', onload: () => resolve(window.ZXing), onerror: reject,
+    });
+    document.head.append(s);
+  });
+  return zxingP;
+}
+async function readBarcodeZxing(file) {
+  const ZX = await loadZxing().catch(() => null);
+  if (!ZX) return null;
+  // foto do celular é enorme; 1600 px de largura bastam e deixam a leitura rápida
   const bmp = await createImageBitmap(file);
-  const det = new BarcodeDetector({ formats: ['ean_13'] });
-  const codes = await det.detect(bmp).catch(() => []);
-  // o ISBN-13 é o EAN que começa com 978 ou 979; o código menor ao lado é o preço
-  const hit = codes.map(c => c.rawValue.replace(/\D/g, '')).find(v => /^97[89]\d{10}$/.test(v));
-  return hit || null;
+  const scale = Math.min(1, 1600 / bmp.width);
+  const c = Object.assign(document.createElement('canvas'), { width: Math.round(bmp.width * scale), height: Math.round(bmp.height * scale) });
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  const hints = new Map([[ZX.DecodeHintType.POSSIBLE_FORMATS, [ZX.BarcodeFormat.EAN_13]], [ZX.DecodeHintType.TRY_HARDER, true]]);
+  try {
+    const res = await new ZX.BrowserMultiFormatReader(hints).decodeFromImageUrl(c.toDataURL('image/jpeg', 0.9));
+    const v = res.getText().replace(/\D/g, '');
+    return isIsbn(v) ? v : null;
+  } catch { return null; }
 }
 
 /* ---------- Busca de dados do livro (Google Books, depois Open Library) ---------- */
@@ -261,11 +291,13 @@ function grade(deckId, i, ok) {
    ========================================================= */
 const VIEWS = { estante: viewEstante, prazos: viewPrazos, guias: viewGuias, estudo: viewEstudo, apps: viewApps };
 const view = () => $('#view');
+const NAV_PARENT = {};
 
 function route() {
   const [, name, id] = (location.hash || '').match(/^#\/([a-z]+)(?:\/(.+))?$/) || [];
   const r = VIEWS[name] ? { name, id: id && decodeURIComponent(id) } : { name: 'estante', id: null };
-  $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === r.name));
+  const tab = NAV_PARENT[r.name] || r.name;
+  $$('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === tab || a.dataset.nav === r.name));
   VIEWS[r.name](r.id);
   icons();
   window.scrollTo(0, 0);
@@ -297,6 +329,7 @@ function viewEstante() {
   for (let i = 0; i < list.length; i += perRow) rows.push(list.slice(i, i + perRow));
 
   view().innerHTML = `
+    ${alertaPrazos()}
     <section class="head">
       <div>
         <p class="kicker">Sua estante</p>
@@ -423,9 +456,7 @@ function bookForm(b = {}) {
     msg('Lendo o código...');
     const code = await readBarcode(f).catch(() => null);
     if (!code) {
-      msg('BarcodeDetector' in window
-        ? 'Não consegui ler. Tente uma foto mais de perto e com luz, ou digite o ISBN (começa com 978 ou 979).'
-        : 'Este navegador não lê código de barras pela foto. Digite o ISBN que aparece acima do código (começa com 978).');
+      msg('Não consegui ler. Tire a foto mais de perto, reta e com luz, ou digite o ISBN que aparece acima das barras (começa com 978 ou 979).');
       return;
     }
     form.isbn.value = code;
@@ -512,7 +543,9 @@ async function exportBooks() {
     const { pdf, cover, ...rest } = b;
     out.push({ ...rest, cover: cover instanceof Blob ? await toData(cover) : undefined });
   }
-  const blob = new Blob([JSON.stringify({ app: 'toga', v: 1, books: out, myCards: store.get('myCards', []) })], { type: 'application/json' });
+  // tudo o que fica no localStorage (prazos, processos, cartões, artigos, modelos) vai junto
+  const prefs = Object.fromEntries(Object.keys(localStorage).filter(k => k.startsWith('toga:')).map(k => [k.slice(5), store.get(k.slice(5))]));
+  const blob = new Blob([JSON.stringify({ app: 'toga', v: 2, books: out, prefs })], { type: 'application/json' });
   const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `estante-toga-${iso(new Date())}.json` });
   a.click();
   if (BOOKS.some(b => b.pdf)) toast('PDFs guardados no aparelho não entram na cópia');
@@ -526,9 +559,10 @@ function importBooks() {
         if (typeof b.cover === 'string') b.cover = await (await fetch(b.cover)).blob();
         await db.put(b);
       }
-      if (j.myCards?.length) store.set('myCards', j.myCards);
+      if (j.myCards?.length) store.set('myCards', j.myCards);   // cópias da versão 1
+      for (const [k, v] of Object.entries(j.prefs || {})) store.set(k, v);
       await loadBooks(); route();
-      toast(`${(j.books || []).length} livros restaurados`);
+      toast(`Restaurado: ${(j.books || []).length} livros e suas anotações`);
     } catch { toast('Arquivo inválido'); }
   };
   inp.click();
@@ -536,12 +570,13 @@ function importBooks() {
 
 /* ---------- Prazos ---------- */
 function viewPrazos() {
-  const last = store.get('prazoForm', { regime: 'civel', days: 15, dje: true, forense: true, federal: false, dobro: false });
+  const last = { regime: 'civel', days: 15, dje: true, forense: true, federal: false, dobro: false, ...store.get('prazoForm', {}) };
   const saved = store.get('prazos', []).sort((a, b) => a.end.localeCompare(b.end));
   const today = iso(new Date());
 
   view().innerHTML = `
     <section class="head"><div><p class="kicker">Calculadora</p><h1>Prazos</h1></div></section>
+    ${alertaPrazos()}
 
     <form id="prazoForm" class="card form">
       <div class="grid2">
@@ -574,7 +609,10 @@ function viewPrazos() {
     </details>
 
     <section>
-      <h2 class="sec">Meus prazos</h2>
+      <div class="row-head"><h2 class="sec">Meus prazos</h2>
+        ${saved.length ? `<div class="actions start">
+          ${'Notification' in window && Notification.permission === 'default' ? '<button class="btn ghost" data-act="notify"><i data-lucide="bell"></i>Avisar ao abrir</button>' : ''}
+          <button class="btn ghost" data-act="ics-all"><i data-lucide="calendar-plus"></i>Todos na agenda</button></div>` : ''}</div>
       ${saved.length ? `<ul class="prazos">${saved.map(p => {
         const left = Math.round((parseIso(p.end) - parseIso(today)) / 864e5);
         const cls = left < 0 ? 'past' : left <= 2 ? 'hot' : left <= 5 ? 'warm' : '';
@@ -608,6 +646,7 @@ function viewPrazos() {
       dje: !!f.dje, dobro: !!f.dobro, forense: !!f.forense, federal: !!f.federal,
     };
     store.set('prazoForm', opts);
+    store.set('prazoAuto', false);
     const r = calcPrazo({ ...opts, start: parseIso(opts.start), custom: store.get('customDays', []) });
     const uniq = [...new Map(r.skipped.map(([d, why]) => [iso(d), [d, why]])).values()].filter(([d]) => d < r.end);
     $('#prazoOut').innerHTML = `
@@ -631,6 +670,8 @@ function viewPrazos() {
     });
     $('#prazoOut').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
+  // veio do botão "Calcular prazo" de uma intimação: já mostra o resultado
+  if (store.get('prazoAuto')) setTimeout(() => form.requestSubmit(), 0);
 
   $('#customForm').addEventListener('submit', e => {
     e.preventDefault();
@@ -640,20 +681,26 @@ function viewPrazos() {
   });
 }
 
-function downloadIcs(p) {
-  const d = p.end.replace(/-/g, '');
-  const prev = iso(addDays(parseIso(p.end), -1)).replace(/-/g, '');
-  const ics = [
-    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Toga//Prazos//PT',
-    'BEGIN:VEVENT', `UID:${p.id}@toga`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').slice(0, 15)}Z`,
-    `DTSTART;VALUE=DATE:${d}`, `SUMMARY:PRAZO: ${p.title}${p.proc ? ' (' + p.proc + ')' : ''}`,
-    'BEGIN:VALARM', 'TRIGGER:-PT24H', 'ACTION:DISPLAY', `DESCRIPTION:Prazo vence amanhã (${prev})`, 'END:VALARM',
-    'END:VEVENT', 'END:VCALENDAR',
-  ].join('\r\n');
-  const a = Object.assign(document.createElement('a'), {
-    href: URL.createObjectURL(new Blob([ics], { type: 'text/calendar' })), download: `prazo-${p.end}.ics`,
+function downloadIcs(items) {
+  const list = Array.isArray(items) ? items : [items];
+  const txt = s => String(s).replace(/[\\;,]/g, m => '\\' + m).replace(/\n/g, '\\n');
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+  const events = list.flatMap(p => {
+    const d = p.end.replace(/-/g, '');
+    return [
+      'BEGIN:VEVENT', `UID:${p.id}@toga`, `DTSTAMP:${stamp}`,
+      `DTSTART;VALUE=DATE:${d}`, `DTEND;VALUE=DATE:${iso(addDays(parseIso(p.end), 1)).replace(/-/g, '')}`,
+      `SUMMARY:${txt('PRAZO: ' + p.title + (p.proc ? ' (' + p.proc + ')' : ''))}`,
+      'BEGIN:VALARM', 'TRIGGER:-PT24H', 'ACTION:DISPLAY', `DESCRIPTION:${txt('Vence amanhã: ' + p.title)}`, 'END:VALARM',
+      'BEGIN:VALARM', 'TRIGGER:-P3D', 'ACTION:DISPLAY', `DESCRIPTION:${txt('Vence em 3 dias: ' + p.title)}`, 'END:VALARM',
+      'END:VEVENT',
+    ];
   });
-  a.click();
+  const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Toga//Prazos//PT', ...events, 'END:VCALENDAR'].join('\r\n');
+  Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(new Blob([ics], { type: 'text/calendar' })),
+    download: list.length === 1 ? `prazo-${list[0].end}.ics` : 'prazos-toga.ics',
+  }).click();
 }
 
 /* ---------- Guias ---------- */
@@ -868,10 +915,3 @@ window.addEventListener('resize', () => {
 });
 window.addEventListener('hashchange', route);
 
-(async () => {
-  await loadBooks();
-  route();
-  if ('serviceWorker' in navigator && window.isSecureContext) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  }
-})();

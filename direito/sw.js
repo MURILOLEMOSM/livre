@@ -4,8 +4,8 @@
    cache e atualiza em segundo plano. Buscas de livros passam direto.
    Ao mudar qualquer arquivo, suba a versão.
    ========================================================= */
-const VERSION = 'toga-v1';
-const SHELL = ['./', './index.html', './style.css', './data.js', './app.js', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png'];
+const VERSION = 'toga-v3';
+const SHELL = ['./', './index.html', './style.css', './data.js', './app.js', './pratica.js', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png'];
 const CDN = ['unpkg.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 
 self.addEventListener('install', e => {

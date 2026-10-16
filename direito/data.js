@@ -414,3 +414,324 @@ const APPS = [
     { name: 'Conselho Federal da OAB', url: 'https://www.oab.org.br', what: 'Estatuto, Código de Ética, provimentos e notícias. Link para a carteira digital.', when: 'Conferir normas da profissão.', tags: ['grátis', 'oficial'] },
   ]},
 ];
+
+/* ---------- Data da última revisão do conteúdo ---------- */
+const REVISADO = 'outubro de 2026';
+
+/* ---------- Modelos grátis ----------
+   {{campo}} é trocado pelo que a pessoa preencher. Campo vazio
+   continua aparecendo como [Campo] para não sumir do texto. */
+const QUALIF = [
+  { k: 'cliente', label: 'Nome completo do cliente' },
+  { k: 'nacionalidade', label: 'Nacionalidade', ph: 'brasileiro(a)' },
+  { k: 'estadoCivil', label: 'Estado civil' },
+  { k: 'profissao', label: 'Profissão' },
+  { k: 'cpf', label: 'CPF' },
+  { k: 'endereco', label: 'Endereço completo' },
+];
+const ADV = [
+  { k: 'advogado', label: 'Nome do(a) advogado(a)' },
+  { k: 'oab', label: 'OAB (número e UF)', ph: 'OAB/SP 123.456' },
+  { k: 'enderecoAdv', label: 'Endereço profissional' },
+  { k: 'email', label: 'E-mail profissional' },
+];
+const LOCAL = [
+  { k: 'cidade', label: 'Cidade' },
+  { k: 'data', label: 'Data', ph: '16 de outubro de 2026' },
+];
+
+const MODELOS = [
+  {
+    id: 'procuracao', cat: 'Advocacia', title: 'Procuração ad judicia et extra',
+    sub: 'Poderes gerais para o foro e poderes especiais do art. 105 do CPC',
+    fields: [...QUALIF, ...ADV, { k: 'finalidade', label: 'Finalidade', ph: 'propor ação de indenização contra Empresa X' }, ...LOCAL],
+    text: `PROCURAÇÃO
+
+OUTORGANTE: {{cliente}}, {{nacionalidade}}, {{estadoCivil}}, {{profissao}}, inscrito(a) no CPF sob o nº {{cpf}}, residente e domiciliado(a) em {{endereco}}.
+
+OUTORGADO(A): {{advogado}}, advogado(a) inscrito(a) na {{oab}}, com escritório em {{enderecoAdv}}, e-mail {{email}}.
+
+PODERES: pelo presente instrumento, o(a) outorgante nomeia e constitui o(a) outorgado(a) seu(sua) procurador(a), conferindo-lhe os poderes da cláusula ad judicia et extra para o foro em geral, em qualquer juízo, instância ou tribunal, podendo propor as ações competentes e defendê-lo(a) nas contrárias, seguindo umas e outras até final decisão, usando os recursos legais e acompanhando-os, e ainda os poderes especiais para receber citação, confessar, reconhecer a procedência do pedido, transigir, desistir, renunciar ao direito sobre o qual se funda a ação, receber, dar quitação, firmar compromisso e assinar declaração de hipossuficiência econômica (art. 105 do CPC), podendo substabelecer com ou sem reserva de poderes, especialmente para {{finalidade}}.
+
+{{cidade}}, {{data}}.
+
+_______________________________________
+{{cliente}}`,
+  },
+  {
+    id: 'honorarios', cat: 'Advocacia', title: 'Contrato de honorários',
+    sub: 'Modelo enxuto, por escrito, como recomenda o Código de Ética',
+    fields: [...QUALIF, ...ADV,
+      { k: 'objeto', label: 'Serviço contratado', ph: 'ajuizamento e acompanhamento de ação trabalhista contra Empresa X, até o trânsito em julgado' },
+      { k: 'valor', label: 'Honorários iniciais', ph: 'R$ 3.000,00 em 3 parcelas mensais de R$ 1.000,00' },
+      { k: 'exito', label: 'Honorários de êxito', ph: '20% do proveito econômico obtido' },
+      { k: 'foro', label: 'Foro', ph: 'Comarca de São Paulo/SP' }, ...LOCAL],
+    text: `CONTRATO DE PRESTAÇÃO DE SERVIÇOS ADVOCATÍCIOS E HONORÁRIOS
+
+CONTRATANTE: {{cliente}}, {{nacionalidade}}, {{estadoCivil}}, {{profissao}}, CPF {{cpf}}, residente em {{endereco}}.
+
+CONTRATADO(A): {{advogado}}, {{oab}}, com escritório em {{enderecoAdv}}, e-mail {{email}}.
+
+CLÁUSULA 1ª – OBJETO. O(A) contratado(a) prestará ao(à) contratante os seguintes serviços: {{objeto}}.
+
+CLÁUSULA 2ª – HONORÁRIOS. Pelos serviços, o(a) contratante pagará: (a) {{valor}}; e (b) {{exito}}. Os honorários de sucumbência pertencem ao(à) advogado(a) (art. 23 da Lei 8.906/1994) e não se compensam com os contratados.
+
+CLÁUSULA 3ª – DESPESAS. Custas, emolumentos, perícias, cópias, deslocamentos e demais despesas do processo correm por conta do(a) contratante, mediante prestação de contas.
+
+CLÁUSULA 4ª – OBRIGAÇÃO DE MEIO. O(A) contratado(a) se obriga a empregar a melhor técnica e diligência, sem garantia de resultado.
+
+CLÁUSULA 5ª – DEVERES DO CONTRATANTE. Fornecer documentos e informações verdadeiras, manter contato atualizado e comunicar qualquer fato novo relativo ao caso.
+
+CLÁUSULA 6ª – COMUNICAÇÃO. As partes se comunicarão pelos e-mails e telefones informados. O(A) contratado(a) informará o andamento sempre que houver movimentação relevante.
+
+CLÁUSULA 7ª – RESCISÃO. Em caso de revogação do mandato sem culpa do(a) contratado(a), são devidos os honorários proporcionais ao trabalho realizado e os de êxito, na proporção do serviço prestado, se houver proveito posterior. Na renúncia, o(a) advogado(a) continuará representando o(a) contratante por 10 dias (art. 5º, § 3º, da Lei 8.906/1994).
+
+CLÁUSULA 8ª – TÍTULO EXECUTIVO. Este contrato é título executivo extrajudicial (art. 24 da Lei 8.906/1994).
+
+CLÁUSULA 9ª – FORO. Fica eleito o foro da {{foro}}.
+
+{{cidade}}, {{data}}.
+
+_____________________________          _____________________________
+{{cliente}}                                {{advogado}}
+
+Testemunhas:
+1. ___________________________   2. ___________________________`,
+  },
+  {
+    id: 'recibo', cat: 'Advocacia', title: 'Recibo de honorários',
+    sub: 'Para cada pagamento recebido',
+    fields: [{ k: 'cliente', label: 'Quem pagou' }, { k: 'cpf', label: 'CPF de quem pagou' }, { k: 'valor', label: 'Valor', ph: 'R$ 1.000,00 (mil reais)' },
+      { k: 'referente', label: 'Referente a', ph: '1ª parcela dos honorários do processo nº ...' }, ...ADV.slice(0, 2), { k: 'cpfAdv', label: 'CPF do(a) advogado(a)' }, ...LOCAL],
+    text: `RECIBO DE HONORÁRIOS ADVOCATÍCIOS
+
+Recebi de {{cliente}}, CPF {{cpf}}, a quantia de {{valor}}, referente a {{referente}}, dando plena quitação quanto a este valor.
+
+{{cidade}}, {{data}}.
+
+_______________________________________
+{{advogado}} – {{oab}} – CPF {{cpfAdv}}`,
+  },
+  {
+    id: 'hipossuficiencia', cat: 'Advocacia', title: 'Declaração de hipossuficiência',
+    sub: 'Para o pedido de gratuidade da justiça (CPC art. 99, § 3º)',
+    fields: [...QUALIF, ...LOCAL],
+    text: `DECLARAÇÃO DE HIPOSSUFICIÊNCIA ECONÔMICA
+
+Eu, {{cliente}}, {{nacionalidade}}, {{estadoCivil}}, {{profissao}}, CPF {{cpf}}, residente em {{endereco}}, DECLARO, para fins do art. 98 e seguintes do Código de Processo Civil, que não tenho condições de arcar com as custas e despesas do processo e os honorários advocatícios sem prejuízo do meu sustento e do de minha família.
+
+Declaro estar ciente de que a falsidade desta declaração pode gerar responsabilidade civil e criminal.
+
+{{cidade}}, {{data}}.
+
+_______________________________________
+{{cliente}}`,
+  },
+  {
+    id: 'substabelecimento', cat: 'Advocacia', title: 'Substabelecimento',
+    sub: 'Com ou sem reserva de poderes',
+    fields: [...ADV.slice(0, 2), { k: 'novoAdv', label: 'Advogado(a) que recebe os poderes' }, { k: 'novaOab', label: 'OAB de quem recebe' },
+      { k: 'reserva', label: 'Com ou sem reserva', ph: 'COM reserva' }, { k: 'cliente', label: 'Cliente' }, { k: 'processo', label: 'Processo nº' }, ...LOCAL],
+    text: `SUBSTABELECIMENTO
+
+Eu, {{advogado}}, {{oab}}, substabeleço, {{reserva}} de poderes, na pessoa de {{novoAdv}}, {{novaOab}}, os poderes que me foram conferidos por {{cliente}} nos autos do processo nº {{processo}}.
+
+{{cidade}}, {{data}}.
+
+_______________________________________
+{{advogado}} – {{oab}}`,
+  },
+  {
+    id: 'juntada', cat: 'Petições simples', title: 'Petição de juntada de documentos',
+    sub: 'Também pode ser assinada pelo estagiário (RG da OAB, art. 29)',
+    fields: [{ k: 'juizo', label: 'Juízo', ph: 'Juízo da 2ª Vara Cível da Comarca de Campinas/SP' }, { k: 'processo', label: 'Processo nº' },
+      { k: 'cliente', label: 'Parte que você representa' }, { k: 'documentos', label: 'Documentos', ph: 'comprovantes de pagamento de jan. a mar./2026' }, ...ADV.slice(0, 2), ...LOCAL],
+    text: `EXCELENTÍSSIMO(A) SENHOR(A) DOUTOR(A) JUIZ(A) DE DIREITO DO {{juizo}}
+
+Processo nº {{processo}}
+
+{{cliente}}, já qualificado(a) nos autos em epígrafe, por seu(sua) advogado(a), vem, respeitosamente, à presença de Vossa Excelência, requerer a juntada dos seguintes documentos: {{documentos}}.
+
+Termos em que,
+pede deferimento.
+
+{{cidade}}, {{data}}.
+
+{{advogado}}
+{{oab}}`,
+  },
+  {
+    id: 'habilitacao', cat: 'Petições simples', title: 'Pedido de habilitação nos autos',
+    sub: 'Para passar a receber as intimações em seu nome',
+    fields: [{ k: 'juizo', label: 'Juízo' }, { k: 'processo', label: 'Processo nº' }, { k: 'cliente', label: 'Parte que você representa' }, ...ADV.slice(0, 2), ...LOCAL],
+    text: `EXCELENTÍSSIMO(A) SENHOR(A) DOUTOR(A) JUIZ(A) DO {{juizo}}
+
+Processo nº {{processo}}
+
+{{cliente}}, nos autos em epígrafe, vem, respeitosamente, por seu(sua) advogado(a) que esta subscreve, conforme procuração anexa, requerer a habilitação de {{advogado}}, {{oab}}, e que todas as intimações e publicações sejam feitas exclusivamente em seu nome, sob pena de nulidade (art. 272, § 5º, do CPC).
+
+Termos em que,
+pede deferimento.
+
+{{cidade}}, {{data}}.
+
+{{advogado}}
+{{oab}}`,
+  },
+  {
+    id: 'notificacao', cat: 'Extrajudicial', title: 'Notificação extrajudicial',
+    sub: 'Cobrança, constituição em mora ou aviso formal',
+    fields: [{ k: 'notificante', label: 'Notificante (quem envia)' }, { k: 'notificado', label: 'Notificado(a)' }, { k: 'enderecoNot', label: 'Endereço do(a) notificado(a)' },
+      { k: 'fatos', label: 'Fatos', ph: 'Em 10/08/2026 foi pago o valor de R$ 2.000,00 pelo serviço X, que não foi entregue...' },
+      { k: 'pedido', label: 'O que você exige', ph: 'a devolução integral do valor pago' }, { k: 'prazo', label: 'Prazo', ph: '10 (dez) dias' }, ...LOCAL],
+    text: `NOTIFICAÇÃO EXTRAJUDICIAL
+
+NOTIFICANTE: {{notificante}}
+NOTIFICADO(A): {{notificado}} – {{enderecoNot}}
+
+Prezado(a) Senhor(a),
+
+Pela presente, o(a) notificante vem NOTIFICÁ-LO(A) do seguinte:
+
+{{fatos}}
+
+Diante disso, fica o(a) notificado(a) constituído(a) em mora e instado(a) a providenciar, no prazo de {{prazo}} contados do recebimento desta, {{pedido}}.
+
+Decorrido o prazo sem solução, serão tomadas as medidas judiciais cabíveis, sem nova comunicação.
+
+{{cidade}}, {{data}}.
+
+_______________________________________
+{{notificante}}`,
+  },
+  {
+    id: 'cancelamento', cat: 'Para o cliente (consumidor)', title: 'Cancelamento de assinatura e estorno',
+    sub: 'Cobrança após cancelamento, renovação não autorizada, cobrança em dobro',
+    fields: [{ k: 'cliente', label: 'Nome do consumidor' }, { k: 'cpf', label: 'CPF' }, { k: 'empresa', label: 'Empresa' },
+      { k: 'servico', label: 'Assinatura / serviço' }, { k: 'cobrancas', label: 'Cobranças contestadas', ph: 'R$ 49,90 em 05/09/2026 e R$ 49,90 em 05/10/2026, no cartão final 1234' },
+      { k: 'pedidoCanc', label: 'Quando pediu o cancelamento', ph: 'em 20/08/2026, protocolo nº 123' }, { k: 'email', label: 'E-mail para resposta' }, ...LOCAL],
+    text: `PEDIDO DE CANCELAMENTO E RESTITUIÇÃO DE VALORES
+
+À {{empresa}}
+
+Eu, {{cliente}}, CPF {{cpf}}, titular da assinatura {{servico}}, solicito:
+
+1. O CANCELAMENTO IMEDIATO da assinatura e de qualquer renovação automática, com confirmação por escrito e número de protocolo.
+
+2. A RESTITUIÇÃO das seguintes cobranças, feitas sem autorização ou após o pedido de cancelamento {{pedidoCanc}}: {{cobrancas}}.
+
+A restituição deve ser em dobro, com correção monetária e juros, nos termos do art. 42, parágrafo único, do Código de Defesa do Consumidor, salvo engano justificável. Se a contratação foi feita pela internet há menos de 7 dias, exerço também o direito de arrependimento (art. 49 do CDC).
+
+Lembro que o cancelamento deve ser possível pelo mesmo canal usado para contratar (Decreto 11.034/2022), sem exigências que dificultem o pedido.
+
+Aguardo resposta em até 10 dias no e-mail {{email}}. Sem solução, registrarei reclamação no consumidor.gov.br e no Procon e tomarei as medidas judiciais cabíveis, inclusive no Juizado Especial Cível.
+
+{{cidade}}, {{data}}.
+
+{{cliente}}`,
+  },
+  {
+    id: 'lgpd', cat: 'Para o cliente (consumidor)', title: 'Pedido de remoção de dados pessoais (LGPD)',
+    sub: 'Nome em site, cadastro indevido, dados desatualizados',
+    fields: [{ k: 'cliente', label: 'Nome do titular' }, { k: 'cpf', label: 'CPF' }, { k: 'empresa', label: 'Empresa / site' },
+      { k: 'urls', label: 'Onde aparecem os dados', ph: 'links das páginas' }, { k: 'motivo', label: 'Por que remover', ph: 'o processo foi arquivado e a página exibe meu nome completo e endereço' },
+      { k: 'email', label: 'E-mail para resposta' }, ...LOCAL],
+    text: `REQUERIMENTO DO TITULAR DE DADOS – LEI 13.709/2018 (LGPD)
+
+À {{empresa}}
+Aos cuidados do(a) Encarregado(a) pelo Tratamento de Dados Pessoais
+
+Eu, {{cliente}}, CPF {{cpf}}, com base no art. 18 da Lei Geral de Proteção de Dados, requeiro:
+
+1. A confirmação da existência de tratamento e o acesso aos meus dados pessoais (art. 18, I e II);
+2. A correção dos dados incompletos, inexatos ou desatualizados (art. 18, III);
+3. A anonimização, o bloqueio ou a eliminação dos dados desnecessários, excessivos ou tratados em desconformidade com a lei (art. 18, IV), em especial nas seguintes páginas: {{urls}};
+4. A informação sobre as entidades com as quais meus dados foram compartilhados (art. 18, VII).
+
+Motivo: {{motivo}}.
+
+Peço resposta em até 15 dias (art. 19, II), no e-mail {{email}}. Sem resposta adequada, apresentarei petição à Autoridade Nacional de Proteção de Dados (art. 18, § 1º).
+
+{{cidade}}, {{data}}.
+
+{{cliente}}`,
+  },
+];
+
+/* ---------- Lei seca: textos compilados no Planalto (fonte oficial) ---------- */
+const LEIS = [
+  ['Constituição Federal', 'https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm'],
+  ['Código Civil (Lei 10.406/2002)', 'https://www.planalto.gov.br/ccivil_03/leis/2002/l10406compilada.htm'],
+  ['Código de Processo Civil (Lei 13.105/2015)', 'https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/lei/l13105.htm'],
+  ['Código Penal (DL 2.848/1940)', 'https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm'],
+  ['Código de Processo Penal (DL 3.689/1941)', 'https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm'],
+  ['CLT (DL 5.452/1943)', 'https://www.planalto.gov.br/ccivil_03/decreto-lei/del5452compilado.htm'],
+  ['Código de Defesa do Consumidor (Lei 8.078/1990)', 'https://www.planalto.gov.br/ccivil_03/leis/l8078compilado.htm'],
+  ['Código Tributário Nacional (Lei 5.172/1966)', 'https://www.planalto.gov.br/ccivil_03/leis/l5172compilado.htm'],
+  ['Estatuto da Advocacia (Lei 8.906/1994)', 'https://www.planalto.gov.br/ccivil_03/leis/l8906.htm'],
+  ['ECA (Lei 8.069/1990)', 'https://www.planalto.gov.br/ccivil_03/leis/l8069compilado.htm'],
+  ['Juizados Especiais (Lei 9.099/1995)', 'https://www.planalto.gov.br/ccivil_03/leis/l9099.htm'],
+  ['Lei Maria da Penha (Lei 11.340/2006)', 'https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2006/lei/l11340.htm'],
+  ['Lei de Execução Penal (Lei 7.210/1984)', 'https://www.planalto.gov.br/ccivil_03/leis/l7210.htm'],
+  ['Mandado de Segurança (Lei 12.016/2009)', 'https://www.planalto.gov.br/ccivil_03/_ato2007-2010/2009/lei/l12016.htm'],
+  ['LGPD (Lei 13.709/2018)', 'https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm'],
+];
+
+/* ---------- Pesquisa de jurisprudência (abre a busca oficial com o termo) ---------- */
+const BUSCAS = [
+  ['STJ', 'https://scon.stj.jus.br/SCON/pesquisar.jsp?livre='],
+  ['STF', 'https://jurisprudencia.stf.jus.br/pages/search?base=acordaos&queryString='],
+  ['Todos os tribunais (.jus.br)', 'https://www.google.com/search?q=site%3Ajus.br+'],
+];
+
+/* ---------- Guias extras, para quem atende consumidor ---------- */
+GUIDES.push(
+  {
+    id: 'assinatura',
+    icon: 'credit-card',
+    title: 'Cobrança de assinatura',
+    sub: 'Cliente não consegue cancelar ou foi cobrado depois de cancelar',
+    sections: [
+      { h: 'O que a lei garante', type: 'list', items: [
+        'Cobrança indevida paga deve ser devolvida em dobro, com correção e juros, salvo engano justificável (CDC art. 42, parágrafo único).',
+        'Contratou pela internet ou por telefone? Tem 7 dias para desistir e receber tudo de volta (CDC art. 49).',
+        'O cancelamento deve ser tão fácil quanto a contratação. O SAC tem que permitir cancelar e dar protocolo (Decreto 11.034/2022).',
+        'Dificultar o cancelamento ou condicionar a cobrança de taxa sem previsão clara é prática abusiva (CDC art. 39).',
+      ]},
+      { h: 'Passo a passo para o cliente', type: 'do', items: [
+        'Pedir o cancelamento por escrito (e-mail ou chat) e guardar o protocolo e os prints.',
+        'Mandar o modelo "Cancelamento de assinatura e estorno" da aba Modelos.',
+        'Contestar a cobrança no banco ou no cartão, com o protocolo em mãos.',
+        'Sem resposta em 10 dias: reclamação no consumidor.gov.br, que tem prazo de resposta da empresa.',
+        'Ainda sem solução: Juizado Especial Cível. Até 20 salários mínimos, a pessoa pode ir sem advogado (Lei 9.099, art. 9º).',
+      ]},
+      { h: 'Evite', type: 'dont', items: [
+        'Só bloquear o cartão: a dívida pode continuar e virar negativação.',
+        'Aceitar "crédito na conta" no lugar do estorno, se a pessoa não quiser.',
+      ]},
+    ],
+    fonte: 'CDC arts. 39, 42 e 49; Decreto 11.034/2022; Lei 9.099/1995, art. 9º.',
+  },
+  {
+    id: 'dados',
+    icon: 'eye-off',
+    title: 'Nome do cliente na internet',
+    sub: 'Processo aparecendo no Google e em sites de busca jurídica',
+    sections: [
+      { h: 'Por que aparece', type: 'text', items: [
+        'Processos e diários oficiais, em regra, são públicos. Sites de busca jurídica copiam esses dados e o Google indexa as páginas. Público não quer dizer sem regra: quem republica dados pessoais continua sujeito à LGPD.',
+      ]},
+      { h: 'O que dá para pedir', type: 'list', items: [
+        'Ao site: correção, anonimização ou eliminação de dados excessivos ou desatualizados (LGPD art. 18). Use o modelo "Pedido de remoção de dados pessoais".',
+        'Ao tribunal: se o processo deveria estar em segredo de justiça (família, por exemplo, CPC art. 189), peça a decretação do sigilo nos autos.',
+        'Ao Google: pedido de remoção de resultados com informações pessoais, pelo formulário de remoção.',
+        'Sem resposta em 15 dias: petição à ANPD (LGPD art. 18, § 1º) ou ação judicial.',
+      ]},
+      { h: 'Na hora de explicar ao cliente', type: 'say', items: [
+        '"O processo é público por regra, mas você tem direito de pedir que tirem ou escondam dados que não precisam estar lá."',
+        '"Remover do site não apaga o processo do tribunal. O processo continua existindo."',
+      ]},
+    ],
+    fonte: 'LGPD arts. 18 e 19; CPC art. 189.',
+  },
+);
