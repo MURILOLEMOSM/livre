@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>CAMPUS · Estudos</title>
+  <meta name="description" content="Grade, biblioteca, atlas 3D, acervo gratuito e quiz para estudantes de Medicina, Computação, Fisioterapia e Direito.">
+  <meta name="theme-color" content="#0b1120">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <!-- Ícones (sprite SVG) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-grade" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M7 13h4M7 17h7"/></symbol>
+    <symbol id="i-livro" viewBox="0 0 24 24"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6.5A2.5 2.5 0 0 0 4 21.5 2.5 2.5 0 0 0 6.5 24H19"/><path d="M8 7h7M8 11h5"/></symbol>
+    <symbol id="i-atlas" viewBox="0 0 24 24"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="m3 7 9 5 9-5M12 12v10"/></symbol>
+    <symbol id="i-acervo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+    <symbol id="i-quiz" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></symbol>
+    <symbol id="i-mais" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-lixo" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+    <symbol id="i-sol" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-lua" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 8a2 2 0 0 1 2-2h2l2-3h6l2 3h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="4"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></symbol>
+    <symbol id="i-externo" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+    <symbol id="i-fechar" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-baixar" viewBox="0 0 24 24"><path d="M12 4v12M7 11l5 5 5-5M4 20h16"/></symbol>
+    <symbol id="i-dica" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></symbol>
+  </svg>
+
+  <div class="app">
+    <!-- Barra lateral (desktop) / barra inferior (celular) -->
+    <nav class="nav" aria-label="Seções">
+      <div class="nav-marca">
+        <span class="marca-logo" aria-hidden="true">C</span>
+        <span class="marca-nome">CAMPUS</span>
+      </div>
+      <a class="nav-item" href="#/grade" data-rota="grade"><svg><use href="#i-grade"/></svg><span>Grade</span></a>
+      <a class="nav-item" href="#/biblioteca" data-rota="biblioteca"><svg><use href="#i-livro"/></svg><span>Biblioteca</span></a>
+      <a class="nav-item" href="#/atlas" data-rota="atlas"><svg><use href="#i-atlas"/></svg><span id="nav-visual">Atlas 3D</span></a>
+      <a class="nav-item" href="#/acervo" data-rota="acervo"><svg><use href="#i-acervo"/></svg><span>Acervo</span></a>
+      <a class="nav-item" href="#/quiz" data-rota="quiz"><svg><use href="#i-quiz"/></svg><span>Quiz</span></a>
+    </nav>
+
+    <div class="principal">
+      <header class="topo">
+        <button class="curso-chip" id="btn-curso" type="button" aria-label="Trocar de curso">
+          <span class="curso-ponto"></span>
+          <span id="curso-nome">Medicina</span>
+          <span class="chip-seta" aria-hidden="true">▾</span>
+        </button>
+        <div class="topo-acoes">
+          <button class="btn-icone" id="btn-instalar" type="button" hidden aria-label="Instalar app"><svg><use href="#i-baixar"/></svg></button>
+          <button class="btn-icone" id="btn-tema" type="button" aria-label="Alternar tema claro ou escuro"><svg><use href="#i-sol"/></svg></button>
+        </div>
+      </header>
+
+      <main id="tela" class="tela" tabindex="-1"></main>
+    </div>
+  </div>
+
+  <!-- Folha (modal) reutilizável -->
+  <dialog id="folha" class="folha">
+    <form method="dialog" class="folha-fechar"><button class="btn-icone" aria-label="Fechar"><svg><use href="#i-fechar"/></svg></button></form>
+    <div id="folha-conteudo"></div>
+  </dialog>
+
+  <div id="aviso" class="aviso" role="status" aria-live="polite"></div>
+</body>
+</html>
