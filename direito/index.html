@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>TOGA · Estante e prática jurídica</title>
+  <meta name="description" content="Estante digital de livros jurídicos, calculadora de prazos, guias de conduta e estudo para estudantes de Direito e advogados." />
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#0F1A2B" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="TOGA" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@1.52.0/dist/umd/lucide.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <aside class="rail" aria-label="Menu principal">
+    <a class="brand" href="#/estante">TOGA<span>.</span></a>
+    <nav>
+      <a href="#/estante" data-nav="estante"><i data-lucide="library"></i><span>Estante</span></a>
+      <a href="#/prazos" data-nav="prazos"><i data-lucide="calendar-clock"></i><span>Prazos</span></a>
+      <a href="#/guias" data-nav="guias"><i data-lucide="scale"></i><span>Guias</span></a>
+      <a href="#/estudo" data-nav="estudo"><i data-lucide="layers"></i><span>Estudo</span></a>
+      <a href="#/apps" data-nav="apps"><i data-lucide="layout-grid"></i><span>Apps</span></a>
+    </nav>
+  </aside>
+
+  <header class="topbar"><a class="brand" href="#/estante">TOGA<span>.</span></a></header>
+
+  <main id="view" class="view"></main>
+
+  <dialog id="sheet" class="sheet">
+    <button class="sheet-x" data-close aria-label="Fechar"><i data-lucide="x"></i></button>
+    <div id="sheetBody"></div>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

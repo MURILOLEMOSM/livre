@@ -6,7 +6,7 @@
    Ao mudar qualquer arquivo do app, suba o número da versão.
    ========================================================= */
 
-const VERSION = 'livre-v11';
+const VERSION = 'livre-v12';
 const SHELL_CACHE = `${VERSION}-shell`;
 const CDN_CACHE = `${VERSION}-cdn`;
 
@@ -88,6 +88,9 @@ self.addEventListener('fetch', event => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
+
+  // /direito/ é outro app (TOGA), com service worker próprio
+  if (url.origin === self.location.origin && url.pathname.startsWith('/direito/')) return;
 
   // Navegação (abrir o app): tenta a rede, cai para o index em cache offline
   if (request.mode === 'navigate') {
