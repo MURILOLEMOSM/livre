@@ -1,0 +1,24 @@
+{
+  "id": "/lido/",
+  "name": "LIDO · Leitura com foco",
+  "short_name": "LIDO",
+  "description": "Leia todo dia e lembre do que leu: sessão com vela que apaga se você sair do app, notas por voz e revisão espaçada.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "./#/hoje",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#100E0C",
+  "theme_color": "#100E0C",
+  "categories": ["books", "education", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Ler agora", "short_name": "Ler", "url": "./#/ler", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Revisar notas", "short_name": "Revisar", "url": "./#/revisar", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

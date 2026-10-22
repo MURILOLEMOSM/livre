@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>LIDO</title>
+  <meta name="description" content="Leia todo dia e lembre do que leu: sessão com vela que apaga se você sair do app, notas por voz e revisão espaçada." />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#100E0C" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="LIDO" />
+
+  <!-- Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+
+  <!-- Ícones -->
+  <script src="https://unpkg.com/lucide@1.52.0/dist/umd/lucide.min.js"></script>
+
+  <link rel="stylesheet" href="css/lido.css" />
+</head>
+
+<body>
+  <div class="app">
+    <!-- ========== MENU LATERAL (desktop) ========== -->
+    <aside class="rail" aria-label="Menu principal">
+      <a class="brand" href="#/hoje" aria-label="LIDO, início">LIDO<span>.</span></a>
+      <nav class="rail-nav">
+        <a href="#/hoje" data-nav="hoje"><i data-lucide="sun"></i>Hoje</a>
+        <a href="#/estante" data-nav="estante"><i data-lucide="library"></i>Estante</a>
+        <a href="#/ler" data-nav="ler"><i data-lucide="flame"></i>Ler</a>
+        <a href="#/revisar" data-nav="revisar"><i data-lucide="brain"></i>Revisar <em class="due" data-due hidden></em></a>
+        <a href="#/perfil" data-nav="perfil"><i data-lucide="user-round"></i>Perfil</a>
+      </nav>
+    </aside>
+
+    <!-- ========== TOPO (celular) ========== -->
+    <header class="topbar">
+      <a class="brand" href="#/hoje">LIDO<span>.</span></a>
+      <div class="topbar-end">
+        <button class="install" data-install><i data-lucide="download"></i>Instalar</button>
+        <a class="lvl-chip" id="lvlChip" href="#/perfil"></a>
+      </div>
+    </header>
+
+    <main class="view" id="view" tabindex="-1"></main>
+
+    <!-- ========== BARRA INFERIOR (celular) ========== -->
+    <nav class="tabbar" aria-label="Menu">
+      <a href="#/hoje" data-nav="hoje"><i data-lucide="sun"></i>Hoje</a>
+      <a href="#/estante" data-nav="estante"><i data-lucide="library"></i>Estante</a>
+      <a href="#/ler" class="tab-read" data-nav="ler" aria-label="Ler"><i data-lucide="flame"></i></a>
+      <a href="#/revisar" data-nav="revisar"><span class="ico"><i data-lucide="brain"></i><em class="due" data-due hidden></em></span>Revisar</a>
+      <a href="#/perfil" data-nav="perfil"><i data-lucide="user-round"></i>Perfil</a>
+    </nav>
+  </div>
+
+  <!-- ========== FOLHAS ========== -->
+  <dialog id="dlgBook" class="sheet">
+    <form id="bookForm" class="form">
+      <div class="sheet-head"><h2 id="bookTitle">Novo livro</h2><button type="button" class="icon-btn" data-act="close" aria-label="Fechar"><i data-lucide="x"></i></button></div>
+      <input type="hidden" name="id" />
+      <label>Título<input name="title" maxlength="80" required /></label>
+      <label>Autor<input name="author" maxlength="60" /></label>
+      <div class="two">
+        <label>Total de páginas<input name="pages" type="number" min="0" max="5000" inputmode="numeric" /></label>
+        <label>Página atual<input name="current" type="number" min="0" max="5000" inputmode="numeric" /></label>
+      </div>
+      <label>Situação
+        <select name="status">
+          <option value="lendo">Lendo</option>
+          <option value="quero">Quero ler</option>
+          <option value="lido">Lido</option>
+        </select>
+      </label>
+      <fieldset><legend>Cor da capa</legend><div class="swatches" id="colorPick"></div></fieldset>
+      <button class="btn primary wide" type="submit">Salvar</button>
+      <button class="link danger" type="button" id="delBook" hidden>Apagar livro</button>
+    </form>
+  </dialog>
+
+  <dialog id="dlgStart" class="sheet">
+    <form id="startForm" class="form">
+      <div class="sheet-head"><h2 id="startTitle">Ler</h2><button type="button" class="icon-btn" data-act="close" aria-label="Fechar"><i data-lucide="x"></i></button></div>
+      <input type="hidden" name="bookId" />
+      <fieldset><legend>Quanto tempo?</legend>
+        <div class="chips">
+          <label><input type="radio" name="target" value="10" /><span>10 min</span></label>
+          <label><input type="radio" name="target" value="20" checked /><span>20 min</span></label>
+          <label><input type="radio" name="target" value="30" /><span>30 min</span></label>
+          <label><input type="radio" name="target" value="45" /><span>45 min</span></label>
+          <label><input type="radio" name="target" value="60" /><span>60 min</span></label>
+          <label><input type="radio" name="target" value="0" /><span>Sem meta</span></label>
+        </div>
+      </fieldset>
+      <label>Começando na página<input name="fromPage" type="number" min="0" max="5000" inputmode="numeric" /></label>
+      <p class="muted small">Fique no app: se sair por mais de 15 segundos, a vela apaga e você perde o bônus da sessão.</p>
+      <button class="btn primary wide" type="submit"><i data-lucide="flame"></i>Acender a vela</button>
+    </form>
+  </dialog>
+
+  <dialog id="dlgStop" class="sheet">
+    <form id="stopForm" class="form">
+      <div class="sheet-head"><h2>Fim da sessão</h2><button type="button" class="icon-btn" data-act="close" aria-label="Voltar à leitura"><i data-lucide="x"></i></button></div>
+      <p class="muted" id="stopSummary"></p>
+      <label>Parei na página<input name="toPage" type="number" inputmode="numeric" /></label>
+      <label>O que ficou desta leitura?
+        <textarea name="text" rows="4" maxlength="2000" placeholder="Uma ideia, uma frase, uma dúvida. Opcional."></textarea>
+      </label>
+      <button type="button" class="btn mic" data-act="dictate"><i data-lucide="mic"></i>Ditar</button>
+      <button class="btn primary wide" type="submit">Salvar sessão</button>
+    </form>
+  </dialog>
+
+  <dialog id="dlgNote" class="sheet">
+    <form id="noteForm" class="form">
+      <div class="sheet-head"><h2>Nova nota</h2><button type="button" class="icon-btn" data-act="close" aria-label="Fechar"><i data-lucide="x"></i></button></div>
+      <input type="hidden" name="bookId" />
+      <label>Nota<textarea name="text" rows="4" maxlength="2000" placeholder="O que você quer lembrar?"></textarea></label>
+      <button type="button" class="btn mic" data-act="dictate"><i data-lucide="mic"></i>Ditar</button>
+      <label>Pergunta para a revisão<input name="cue" maxlength="160" placeholder="Opcional. Ex.: Quais são os 3 tipos de memória?" /></label>
+      <label>Página<input name="page" type="number" min="0" max="5000" inputmode="numeric" /></label>
+      <button class="btn primary wide" type="submit">Salvar nota</button>
+    </form>
+  </dialog>
+
+  <dialog id="dlgIos" class="sheet">
+    <div class="form">
+      <div class="sheet-head"><h2>Instalar no iPhone</h2><button type="button" class="icon-btn" data-act="close" aria-label="Fechar"><i data-lucide="x"></i></button></div>
+      <ol class="steps">
+        <li>Abra este site no <b>Safari</b>.</li>
+        <li>Toque em <b>Compartilhar</b> <i data-lucide="share"></i>.</li>
+        <li>Escolha <b>Adicionar à Tela de Início</b>.</li>
+      </ol>
+    </div>
+  </dialog>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/core.js"></script>
+  <script src="js/views.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/pwa.js"></script>
+</body>
+</html>
