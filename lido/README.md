@@ -1,6 +1,6 @@
 # LIDO · Leitura com foco
 
-App web (PWA) irmão do LIVRE, agora para leitura: cronômetro com uma vela que apaga se você sair do app, notas (digitadas ou ditadas) que voltam em revisão espaçada, metas diárias, nível e medalhas. Funciona offline, sem conta e sem servidor: tudo fica no aparelho (com exportar/importar em JSON).
+App web (PWA) irmão do LIVRE, agora para leitura: cronômetro com uma vela que apaga se você sair do app, notas (digitadas ou ditadas) que voltam em revisão espaçada, metas diárias, nível e medalhas. Funciona offline. Com login (mesma conta do LIVRE, Firebase) os dados sincronizam em `lido/{uid}`; sem conta, ficam só no aparelho. Tem exportar/importar em JSON.
 
 Fica na pasta `lido/` deste repositório, então no Netlify abre em `https://<seu-site>/lido/`.
 

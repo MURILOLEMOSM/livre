@@ -93,22 +93,59 @@ const store = {
   json(key) { try { return JSON.parse(this.get(key) || 'null'); } catch { return null; } },
 };
 
-const state = normalize(store.json(STORAGE_KEY));
+/* Cada conta tem sua cópia no aparelho; sem conta, fica na chave base */
+const GUEST_KEY = 'lido:guest';
+let accountId = null;
+const dataKey = () => (accountId ? `${STORAGE_KEY}:${accountId}` : STORAGE_KEY);
+
+const state = emptyState();
 
 let storageWarned = false;
 function saveState() {
   state._savedAt = Date.now();
-  const ok = store.set(STORAGE_KEY, JSON.stringify(state));
+  const ok = store.set(dataKey(), JSON.stringify(state));
   if (!ok && !storageWarned) {
     toast('Este navegador não está salvando os dados. Eles somem ao fechar.');
     storageWarned = true;
   }
+  cloud.queueSave(state);
+}
+
+/** Troca todo o conteúdo do estado sem trocar o objeto */
+function setState(data) {
+  Object.keys(state).forEach(k => delete state[k]);
+  Object.assign(state, normalize(data));
 }
 
 function replaceState(data) {
-  Object.keys(state).forEach(k => delete state[k]);
-  Object.assign(state, normalize(data));
+  setState(data);
   saveState();
+}
+
+/**
+ * Carrega os dados da conta: compara a cópia do aparelho com a da nuvem e
+ * fica com a mais nova. Na primeira entrada, leva junto o que foi feito sem conta.
+ */
+async function loadAccount(user) {
+  accountId = user.id;
+  let local = store.json(dataKey());
+  if (!local) {
+    const guest = store.json(STORAGE_KEY);
+    if (guest?.books?.length) local = guest;
+  }
+  let remote = null;
+  try { remote = await cloud.loadData(); } catch (err) { console.warn('[LIDO] Sem acesso à nuvem agora:', err.message); }
+
+  const localAt = local?._savedAt || 0;
+  if (remote && remote.updatedAt >= localAt - 2000) setState(remote.data);
+  else if (local) { setState(local); saveState(); }   // aparelho tem coisa mais nova: sobe
+  else setState(null);
+  store.set(dataKey(), JSON.stringify(state));
+}
+
+function loadGuest() {
+  accountId = null;
+  setState(store.json(STORAGE_KEY));
 }
 
 /* ---------- Consultas ---------- */

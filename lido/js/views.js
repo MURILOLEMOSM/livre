@@ -291,6 +291,15 @@ function viewPerfil() {
       </div>
     </section>
 
+    <section class="card">
+      <p class="label">Conta</p>
+      ${cloud.user
+        ? `<p>${esc(cloud.user.email)}</p><p class="muted small">Sincronizado na nuvem. Entre com este e-mail em outro aparelho para continuar de onde parou.</p>
+           <div class="actions"><button class="btn" data-act="logout"><i data-lucide="log-out"></i>Sair</button></div>`
+        : `<p class="muted">Seus dados estão só neste aparelho.</p>
+           ${cloud.mode === 'firebase' ? '<div class="actions"><button class="btn primary" data-act="login"><i data-lucide="log-in"></i>Entrar ou criar conta</button></div>' : ''}`}
+    </section>
+
     <section class="card settings">
       <p class="label">Ajustes</p>
       <label>Seu nome<input id="setName" maxlength="30" value="${esc(state.settings.name)}" placeholder="Como quer ser chamado"></label>
@@ -304,6 +313,25 @@ function viewPerfil() {
         <button class="btn" data-install><i data-lucide="smartphone"></i>Instalar</button>
       </div>
       <button class="link danger" data-act="wipe">Apagar todos os dados</button>
+    </section>`;
+}
+
+/* ---------- Entrar ---------- */
+function viewLogin() {
+  return `
+    <section class="onboard">
+      <span class="brand big">LIDO<span>.</span></span>
+      <h1>Leia todo dia. Lembre do que leu.</h1>
+      <p class="muted">Entre para guardar sua estante na nuvem e usar em qualquer aparelho. Já tem conta no LIVRE? É a mesma.</p>
+      <form id="authForm" class="card form">
+        <label>E-mail<input name="email" type="email" autocomplete="email" required></label>
+        <label>Senha<input name="password" type="password" autocomplete="current-password" minlength="6" required></label>
+        <p class="auth-error" id="authError" role="alert" hidden></p>
+        <button class="btn primary wide" type="submit" name="act" value="in">Entrar</button>
+        <button class="btn wide" type="submit" name="act" value="up">Criar conta</button>
+        <button class="link" type="button" data-act="reset">Esqueci a senha</button>
+      </form>
+      <button class="link muted center" data-act="guest">Usar sem conta (fica só neste aparelho)</button>
     </section>`;
 }
 

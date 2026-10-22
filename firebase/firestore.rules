@@ -1,6 +1,6 @@
 rules_version = '2';
 
-// LIVRE · regras do Firestore
+// LIVRE e LIDO · regras do Firestore (o projeto é um só para os dois apps)
 // Cole tudo em Firestore Database > Regras e clique em Publicar.
 //
 // O app só mexe em três lugares, e sempre nos dados da própria pessoa:
@@ -46,6 +46,16 @@ service cloud.firestore {
         && request.resource.data.habits.size() <= 8;
       allow delete: if isOwner(uid);
       // Ler o placar dos outros só pelo servidor (que confere se estão no mesmo grupo)
+    }
+
+    // LIDO (app de leitura): estante, sessões e notas da pessoa, como texto JSON
+    match /lido/{uid} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['data', 'updatedAt'])
+        && request.resource.data.data is string
+        && request.resource.data.data.size() < 900000
+        && request.resource.data.updatedAt is number;
     }
 
     // Qualquer outra coleção: fechada para o app

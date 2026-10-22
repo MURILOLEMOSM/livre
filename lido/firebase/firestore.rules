@@ -1,0 +1,66 @@
+rules_version = '2';
+
+// LIVRE e LIDO · regras do Firestore (o projeto é um só para os dois apps)
+// Cole tudo em Firestore Database > Regras e clique em Publicar.
+//
+// O app só mexe em três lugares, e sempre nos dados da própria pessoa:
+//   users/{uid}            hábitos, histórico, pactos... (texto JSON)
+//   users/{uid}/push/{id}  aparelhos que recebem o lembrete
+//   stats/{uid}            resumo do placar (categoria, início, recorde)
+// Todo o resto (amigos, grupos, mural, desafios, padrinho) só o
+// servidor do Netlify lê e grava, conferindo quem pode ver o quê.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['data', 'updatedAt'])
+        && request.resource.data.data is string
+        && request.resource.data.data.size() < 900000
+        && request.resource.data.updatedAt is number;
+
+      match /push/{deviceId} {
+        allow read, delete: if isOwner(uid);
+        allow create, update: if isOwner(uid)
+          && request.resource.data.keys().hasOnly(['endpoint', 'p256dh', 'auth', 'notify_hour', 'tz', 'last_sent_on',
+                                                   'createdAt', 'weak_dow', 'weak_hour', 'last_weak_on'])
+          && request.resource.data.endpoint is string
+          && request.resource.data.endpoint.size() < 1000
+          && request.resource.data.notify_hour is int
+          && request.resource.data.notify_hour >= 0
+          && request.resource.data.notify_hour <= 23
+          && request.resource.data.tz is string;
+      }
+    }
+
+    match /stats/{uid} {
+      allow create, update: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['habits', 'updatedAt'])
+        && request.resource.data.habits is list
+        && request.resource.data.habits.size() <= 8;
+      allow delete: if isOwner(uid);
+      // Ler o placar dos outros só pelo servidor (que confere se estão no mesmo grupo)
+    }
+
+    // LIDO (app de leitura): estante, sessões e notas da pessoa, como texto JSON
+    match /lido/{uid} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['data', 'updatedAt'])
+        && request.resource.data.data is string
+        && request.resource.data.data.size() < 900000
+        && request.resource.data.updatedAt is number;
+    }
+
+    // Qualquer outra coleção: fechada para o app
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

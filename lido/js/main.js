@@ -17,8 +17,17 @@ function go(path) {
   else location.hash = path;
 }
 
+let booted = false;
+
 function render() {
   const viewEl = $('#view');
+  if (!booted) return;
+  if (cloud.mode === 'firebase' && !cloud.user && !store.get(GUEST_KEY)) {
+    document.documentElement.classList.add('onboarding');
+    viewEl.innerHTML = viewLogin();
+    icons();
+    return;
+  }
   if (!state.settings.onboarded) {
     document.documentElement.classList.add('onboarding');
     viewEl.innerHTML = viewOnboarding();
@@ -273,6 +282,42 @@ function toggleDictation(btn) {
   btn.classList.add('rec');
 }
 
+/* ---------- Conta ---------- */
+async function authSubmit(f, act) {
+  const email = f.email.value.trim(), password = f.password.value;
+  const err = $('#authError');
+  const buttons = $$('button', f);
+  buttons.forEach(b => (b.disabled = true));
+  err.hidden = true;
+  try {
+    const user = act === 'up' ? await cloud.signUp(email, password) : await cloud.signIn(email, password);
+    await loadAccount(user);
+    store.set(GUEST_KEY, '');
+    ui.medals = new Set(earnedMedals().map(m => m.id));
+    toast(act === 'up' ? 'Conta criada. Boa leitura!' : 'Bem-vindo de volta.', true);
+    go('#/hoje');
+  } catch (e) {
+    err.textContent = e.message;
+    err.hidden = false;
+  } finally { buttons.forEach(b => (b.disabled = false)); }
+}
+
+async function resetPassword() {
+  const email = $('#authForm')?.email.value.trim();
+  if (!email) return toast('Digite seu e-mail primeiro.');
+  try { await cloud.resetPassword(email); toast('Se existir conta, o link para nova senha chegou no seu e-mail.', true); }
+  catch (e) { toast(e.message); }
+}
+
+async function logout() {
+  if (state.active) return toast('Encerre a sessão de leitura antes de sair.');
+  if (!confirm('Sair da conta neste aparelho?')) return;
+  await cloud.signOut();
+  loadGuest();
+  store.set(GUEST_KEY, '');
+  render();
+}
+
 /* ---------- Dados ---------- */
 function exportData() {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
@@ -347,11 +392,16 @@ document.addEventListener('click', e => {
       }
       break;
     case 'close': el.closest('dialog').close(); break;
+    case 'guest': store.set(GUEST_KEY, '1'); loadGuest(); render(); break;
+    case 'login': store.set(GUEST_KEY, ''); render(); break;
+    case 'logout': logout(); break;
+    case 'reset': resetPassword(); break;
   }
 });
 
 document.addEventListener('submit', e => {
   const f = e.target;
+  if (f.id === 'authForm') { e.preventDefault(); authSubmit(f, e.submitter?.value || 'in'); return; }
   const handlers = { bookForm: saveBook, startForm: startSession, stopForm: stopSession, noteForm: saveNote, onboardForm: finishOnboarding };
   if (!handlers[f.id]) return;
   e.preventDefault();
@@ -394,6 +444,14 @@ function finishOnboarding(f) {
 
 /* ---------- Início ---------- */
 window.addEventListener('hashchange', render);
-// Voltou depois de fechar o app no meio da sessão: confere se a vela apagou
-if (state.active?.awayAt) checkReturn();
-render();
+
+(async () => {
+  const user = await cloud.init();
+  if (user) await loadAccount(user);
+  else loadGuest();
+  ui.medals = new Set(earnedMedals().map(m => m.id));
+  booted = true;
+  // Voltou depois de fechar o app no meio da sessão: confere se a vela apagou
+  if (state.active?.awayAt) checkReturn();
+  render();
+})();

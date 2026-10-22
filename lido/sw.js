@@ -5,7 +5,7 @@
    Ao mudar qualquer arquivo do app, suba o número da versão.
    ========================================================= */
 
-const VERSION = 'lido-v1';
+const VERSION = 'lido-v2';
 const SHELL_CACHE = `${VERSION}-shell`;
 const CDN_CACHE = `${VERSION}-cdn`;
 
@@ -14,6 +14,8 @@ const SHELL_FILES = [
   './index.html',
   './manifest.webmanifest',
   './css/lido.css',
+  './js/config.js',
+  './js/cloud.js',
   './js/core.js',
   './js/views.js',
   './js/main.js',
@@ -25,8 +27,11 @@ const SHELL_FILES = [
   './icons/favicon-32.png',
 ];
 
-const CDN_HOSTS = ['unpkg.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
-const CDN_FILES = ['https://unpkg.com/lucide@1.52.0/dist/umd/lucide.min.js'];
+const CDN_HOSTS = ['unpkg.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'];
+const CDN_FILES = [
+  'https://unpkg.com/lucide@1.52.0/dist/umd/lucide.min.js',
+  ...['app', 'auth', 'firestore'].map(m => `https://cdn.jsdelivr.net/npm/firebase@12.19.0/firebase-${m}-compat.js`),
+];
 
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
